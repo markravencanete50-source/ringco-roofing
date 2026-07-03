@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg:          oklch(0.97 0.012 80);
+  --ink:         oklch(0.20 0.010 60);
+  --muted:       oklch(0.45 0.020 60);
+  --panel:       oklch(0.16 0.020 50);
+  --panel-2:     oklch(0.14 0.020 50);
+  --panel-3:     oklch(0.12 0.018 50);
+  --card:        oklch(0.99 0.008 80);
+  --line:        oklch(0.90 0.012 75);
+  --accent:      oklch(0.68 0.15 55);
+  --accent-hi:   oklch(0.75 0.15 55);
+  --accent-deep: oklch(0.58 0.13 55);
+  --accent-ink:  oklch(0.16 0.02 50);
+  --blue:        oklch(0.68 0.15 230);
+  --font-display: var(--f-display);
+  --font-body: var(--f-body);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--accent); color: #fff; }
+img, video { display: block; }
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: .16em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* focus visibility for accessibility */
+:focus-visible { outline: 2px solid var(--accent-hi); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
