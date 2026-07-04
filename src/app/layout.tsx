@@ -23,25 +23,13 @@ export const metadata: Metadata = {
   alternates: { canonical: site.url },
 };
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'RoofingContractor',
-  name: site.name,
-  telephone: site.phone,
-  email: site.email,
-  areaServed: site.area,
-  address: { '@type': 'PostalAddress', addressRegion: 'OK', addressCountry: 'US' },
-  sameAs: [site.facebook],
-  priceRange: '$$',
-  description:
-    'Family-owned roofing, siding, gutter and insurance-claim specialists serving Oklahoma County, OK with a 15-year labor warranty and 24/7 emergency service.',
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {/* Per-page schema lives in each page (LocalBusiness on Home/Contact,
+            Service on service pages, FAQPage on FAQ sections, Organization on
+            About) — intentionally not repeated site-wide here. */}
         <Header />
         <main>{children}</main>
         <Footer />

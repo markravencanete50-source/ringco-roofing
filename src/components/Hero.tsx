@@ -1,7 +1,6 @@
-import Button from './Button';
-import { site } from '@/lib/content';
+import MultiCta from './MultiCta';
 
-const chips = ['GAF Certified', '15-Year Labor Warranty', '24/7 Emergency', 'Insurance Claim Experts'];
+const chips = ['GAF Certified', '15-Year Labor Warranty', 'BBB A+', 'Our Own Crew'];
 
 export default function Hero() {
   return (
@@ -19,16 +18,15 @@ export default function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(90deg,oklch(0.13_0.02_50/0.65)_0%,transparent_58%)]" />
 
       <div className="relative z-[2] flex h-full max-w-[900px] flex-col justify-center px-[6vw]">
-        <p className="eyebrow mb-4 text-accent-hi">Roofing · Siding · Gutters · Storm Claims</p>
+        <p className="eyebrow mb-4 text-accent-hi">Family-owned · Serving Oklahoma County</p>
         <h1 className="mb-5 font-display text-[clamp(38px,6vw,68px)] font-bold leading-[1.05] text-[oklch(0.98_0.01_80)]">
-          The roof Oklahoma weather can&rsquo;t beat.
+          Our own crew on your roof &mdash; not a subcontractor you&rsquo;ve never met.
         </h1>
         <p className="mb-8 max-w-[600px] text-[clamp(16px,1.7vw,20px)] text-[oklch(0.85_0.02_70)]">
-          Family-owned, GAF-certified, and relentless on your insurance claim. We handle the storm damage, the adjuster, and the install — so you get the roof you&rsquo;re owed.
+          Family-owned, GAF-certified, and relentless on your insurance claim. We handle the storm damage, the adjuster, and the install &mdash; and we&rsquo;re still here when your warranty needs us.
         </p>
-        <div className="mb-9 flex flex-wrap gap-4">
-          <Button href="/contact" className="!px-8 !py-4 !text-[16px]">Get a free estimate</Button>
-          <Button href={`tel:${site.phone}`} variant="outline" className="!px-8 !py-4 !text-[16px]">Call {site.phoneDisplay}</Button>
+        <div className="mb-9">
+          <MultiCta />
         </div>
         <div className="flex flex-wrap gap-2.5">
           {chips.map((c) => (

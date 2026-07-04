@@ -3,7 +3,7 @@ import { certs } from '@/lib/content';
 
 export default function Certifications() {
   return (
-    <section className="px-[6vw] pb-28">
+    <section className="px-[6vw] py-28">
       <div className="mx-auto grid max-w-wrap gap-6 md:grid-cols-3">
         {certs.map((c, i) => (
           <Reveal key={c.title} delay={i * 0.08}>

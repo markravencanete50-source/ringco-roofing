@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { nav, site } from '@/lib/content';
+import Tel from './Tel';
 
 export default function Footer() {
   return (
@@ -10,7 +11,7 @@ export default function Footer() {
           <p className="max-w-sm text-[15px] leading-relaxed">
             Family-owned roofing, siding, gutter and insurance-claim specialists serving {site.area}. GAF certified, 24/7 emergency service, and a 15-year labor warranty on every roof.
           </p>
-          <a href={`tel:${site.phone}`} className="mt-5 inline-block font-display text-[20px] font-bold text-accent-hi">{site.phoneDisplay}</a>
+          <Tel className="mt-5 font-display text-[20px] font-bold text-accent-hi" />
         </div>
 
         <div>
@@ -27,6 +28,7 @@ export default function Footer() {
           <ul className="space-y-2.5 text-[15px]">
             <li><a href={`mailto:${site.email}`} className="transition-colors hover:text-accent-hi break-all">{site.email}</a></li>
             <li>{site.area}</li>
+            <li>{site.hours}</li>
             <li><a href={site.facebook} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-accent-hi">Facebook</a></li>
           </ul>
         </div>

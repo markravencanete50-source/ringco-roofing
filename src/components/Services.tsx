@@ -31,7 +31,7 @@ export default function Services() {
                   <div className="flex flex-1 flex-col p-6">
                     <h3 className="mb-2.5 font-display text-[21px] font-bold">{s.title}</h3>
                     <p className="mb-4 flex-1 text-[15px] text-muted">{s.blurb}</p>
-                    <Link href={s.slug === 'insurance-claims' ? '/insurance-claims' : '/services'} className="inline-flex items-center gap-1.5 font-display text-[14.5px] font-bold text-accent-deep">
+                    <Link href={s.href} className="inline-flex items-center gap-1.5 font-display text-[14.5px] font-bold text-accent-deep">
                       Learn more <span className="transition-transform group-hover:translate-x-1">→</span>
                     </Link>
                   </div>

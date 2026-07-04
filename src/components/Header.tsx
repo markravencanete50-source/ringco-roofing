@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { nav, site } from '@/lib/content';
+import { nav } from '@/lib/content';
+import Tel from './Tel';
 import { clsx } from './clsx';
 
 export default function Header() {
@@ -45,10 +46,8 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <a href={`tel:${site.phone}`} className="flex items-center gap-2 whitespace-nowrap font-display text-[13.5px] font-bold text-[oklch(0.98_0.01_80)]">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-accent animate-pulseRing" />
-            {site.phoneDisplay}
-          </a>
+          <Tel withDot className="whitespace-nowrap font-display text-[13.5px] font-bold text-[oklch(0.98_0.01_80)]" />
+
           <Link href="/contact" className="rounded-full bg-accent px-[18px] py-[11px] font-display text-[13px] font-bold text-accent-ink transition-colors hover:bg-accent-hi">
             Free Estimate
           </Link>
@@ -67,7 +66,7 @@ export default function Header() {
             {n.label}
           </Link>
         ))}
-        <a href={`tel:${site.phone}`} className="py-1.5 font-display text-[19px] font-bold text-accent-hi">{site.phoneDisplay}</a>
+        <Tel className="py-1.5 font-display text-[19px] font-bold text-accent-hi" />
         <Link href="/contact" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-accent px-[22px] py-3.5 text-center font-display font-bold text-accent-ink">
           Free Estimate
         </Link>
