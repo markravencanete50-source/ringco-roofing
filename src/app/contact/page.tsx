@@ -1,86 +1,55 @@
 import type { Metadata } from 'next';
 import PageHeader from '@/components/PageHeader';
-import Section from '@/components/Section';
+import Reveal from '@/components/Reveal';
 import LeadForm from '@/components/LeadForm';
-import ServiceAreas from '@/components/ServiceAreas';
-import Tel, { TextLink } from '@/components/Tel';
-import JsonLd from '@/components/JsonLd';
+import AreaMap from '@/components/AreaMap';
 import { site } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'Contact Ringco Roofing | Free Inspection — Oklahoma County',
-  description:
-    'Call, text, or request a free roof inspection from Ringco Roofing and Construction in Oklahoma County. Our own crew, 24/7 storm response.',
+  title: 'Free Estimate & Contact | Ringco Roofing — Oklahoma County, OK',
+  description: 'Request a free roof inspection or estimate from Ringco Roofing. Call (405) 470-7696 or send the form — a real person responds, 24/7 for storm emergencies.',
   alternates: { canonical: '/contact' },
 };
 
-const localBusiness = {
-  '@context': 'https://schema.org',
-  '@type': 'RoofingContractor',
-  '@id': `${site.url}/#business`,
-  name: site.name,
-  telephone: site.phone,
-  email: site.email,
-  areaServed: site.area,
-  url: `${site.url}/contact`,
-  address: { '@type': 'PostalAddress', addressRegion: 'OK', addressCountry: 'US' },
-  openingHours: 'Mo-Sa 07:00-19:00',
-  sameAs: [site.facebook],
-};
-
-export default function ContactPage() {
+/**
+ * Least decoration, most clarity. No hero media, no heavy motion —
+ * a converting user is task-focused.
+ */
+export default function ContactPage({ searchParams }: { searchParams?: { service?: string } }) {
   return (
     <>
-      <JsonLd data={localBusiness} />
       <PageHeader
         eyebrow="Contact"
-        title="Let’s get your free inspection on the calendar."
-        sub="Call, text, or send the form — whatever’s easiest. Storm emergency? Call and we’ll respond 24/7."
+        title="Tell us what you're seeing. We'll take it from there."
+        sub="Free inspection, free estimate, straight answers. Storm emergency? Skip the form and call — we answer 24/7."
       />
 
-      <Section>
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start">
-          {/* Multi-modal contact block */}
-          <div>
-            <div className="rounded-[20px] border border-line bg-card p-8 shadow-[0_20px_40px_-32px_oklch(0.2_0.02_60/0.3)]">
-              <div className="eyebrow text-accent-deep">Talk to a person</div>
-              <Tel className="mt-3 font-display text-[clamp(28px,4vw,40px)] font-bold text-ink" withDot />
-              <div className="mt-4 flex flex-wrap gap-3">
-                <a href={`tel:${site.phone}`} className="rounded-full bg-accent px-6 py-3 font-display text-[14px] font-bold text-accent-ink transition-colors hover:bg-accent-hi">Call now</a>
-                {site.textReady ? (
-                  <TextLink className="rounded-full border-[1.5px] border-line px-6 py-3 font-display text-[14px] font-bold text-ink transition-colors hover:border-accent-deep" />
-                ) : null}
-                <a href={`mailto:${site.email}`} className="rounded-full border-[1.5px] border-line px-6 py-3 font-display text-[14px] font-bold text-ink transition-colors hover:border-accent-deep">Email</a>
+      <section className="px-[6vw] py-20">
+        <div className="mx-auto grid max-w-wrap items-start gap-10 lg:grid-cols-[1.35fr_1fr]">
+          <Reveal>
+            <LeadForm defaultService={searchParams?.service} />
+          </Reveal>
+
+          <div className="grid gap-6">
+            <Reveal delay={0.08}>
+              <div className="rounded-3xl border border-line bg-card p-7">
+                <p className="eyebrow mb-4 text-accent-deep">Faster by phone</p>
+                <a href={`tel:${site.phone}`} className="font-display text-[clamp(26px,3vw,34px)] font-bold text-ink transition-colors duration-micro hover:text-accent-deep">
+                  {site.phoneDisplay}
+                </a>
+                <p className="mt-2 text-[14.5px] text-muted">24/7 for storm emergencies. Otherwise 7am–7pm, Mon–Sat.</p>
+                <a href={`mailto:${site.email}`} className="mt-4 inline-block break-all text-[14.5px] font-semibold text-accent-deep">{site.email}</a>
               </div>
-
-              <dl className="mt-8 space-y-4 border-t border-line pt-6 text-[15px]">
-                <div>
-                  <dt className="font-display text-[13px] font-bold uppercase tracking-wide text-muted">Hours</dt>
-                  <dd className="mt-0.5 text-ink">{site.hours}</dd>
-                </div>
-                <div>
-                  <dt className="font-display text-[13px] font-bold uppercase tracking-wide text-muted">Email</dt>
-                  <dd className="mt-0.5 break-all text-ink">{site.email}</dd>
-                </div>
-                <div>
-                  <dt className="font-display text-[13px] font-bold uppercase tracking-wide text-muted">Area served</dt>
-                  <dd className="mt-0.5 text-ink">{site.area} and the surrounding metro</dd>
-                </div>
-              </dl>
-            </div>
-
-            <div className="mt-8">
-              <div className="eyebrow mb-4 text-accent-deep">Where we work</div>
-              <ServiceAreas />
-            </div>
-          </div>
-
-          {/* Lead form */}
-          <div>
-            <LeadForm />
+            </Reveal>
+            <Reveal delay={0.14}>
+              <div>
+                <AreaMap compact />
+                <p className="mt-3 text-center text-[13px] text-muted">Don&rsquo;t see your city? Call anyway — we&rsquo;re on roofs across the whole metro.</p>
+              </div>
+            </Reveal>
           </div>
         </div>
-      </Section>
+      </section>
     </>
   );
 }

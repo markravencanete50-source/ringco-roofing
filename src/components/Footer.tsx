@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { nav, site } from '@/lib/content';
-import Tel from './Tel';
+import Reveal from './Reveal';
+import { nav, site, certs } from '@/lib/content';
 
 export default function Footer() {
   return (
@@ -11,14 +11,14 @@ export default function Footer() {
           <p className="max-w-sm text-[15px] leading-relaxed">
             Family-owned roofing, siding, gutter and insurance-claim specialists serving {site.area}. GAF certified, 24/7 emergency service, and a 15-year labor warranty on every roof.
           </p>
-          <Tel className="mt-5 font-display text-[20px] font-bold text-accent-hi" />
+          <a href={`tel:${site.phone}`} className="mt-5 inline-block font-display text-[20px] font-bold text-accent-hi">{site.phoneDisplay}</a>
         </div>
 
         <div>
           <div className="eyebrow mb-4 text-[oklch(0.6_0.02_60)]">Explore</div>
           <ul className="space-y-2.5 text-[15px]">
             {nav.map((n) => (
-              <li key={n.href}><Link href={n.href} className="transition-colors hover:text-accent-hi">{n.label}</Link></li>
+              <li key={n.href}><Link href={n.href} className="transition-colors duration-micro hover:text-accent-hi">{n.label}</Link></li>
             ))}
           </ul>
         </div>
@@ -26,15 +26,26 @@ export default function Footer() {
         <div>
           <div className="eyebrow mb-4 text-[oklch(0.6_0.02_60)]">Get in touch</div>
           <ul className="space-y-2.5 text-[15px]">
-            <li><a href={`mailto:${site.email}`} className="transition-colors hover:text-accent-hi break-all">{site.email}</a></li>
+            <li><a href={`mailto:${site.email}`} className="break-all transition-colors duration-micro hover:text-accent-hi">{site.email}</a></li>
             <li>{site.area}</li>
-            <li>{site.hours}</li>
-            <li><a href={site.facebook} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-accent-hi">Facebook</a></li>
+            <li><a href={site.facebook} target="_blank" rel="noopener noreferrer" className="transition-colors duration-micro hover:text-accent-hi">Facebook</a></li>
           </ul>
         </div>
       </div>
 
-      <div className="mx-auto mt-16 flex max-w-wrap flex-col justify-between gap-3 border-t border-[oklch(0.24_0.02_55)] pt-6 text-[13px] text-[oklch(0.55_0.02_60)] sm:flex-row">
+      {/* Trust badges — fade in with a slight stagger on scroll-into-view */}
+      <div className="mx-auto mt-14 flex max-w-wrap flex-wrap gap-3">
+        {certs.map((c, i) => (
+          <Reveal key={c.title} delay={i * 0.1}>
+            <span className="flex items-center gap-2.5 rounded-full border border-[oklch(0.26_0.02_55)] px-4 py-2">
+              <span className={`flex h-6 w-6 items-center justify-center rounded-full font-display text-[10px] font-bold ${c.kind === 'gaf' ? 'bg-accent text-accent-ink' : 'bg-blue text-[oklch(0.12_0.02_50)]'}`}>{c.badge}</span>
+              <span className="font-display text-[13px] font-bold text-[oklch(0.85_0.02_70)]">{c.title}</span>
+            </span>
+          </Reveal>
+        ))}
+      </div>
+
+      <div className="mx-auto mt-10 flex max-w-wrap flex-col justify-between gap-3 border-t border-[oklch(0.24_0.02_55)] pt-6 text-[13px] text-[oklch(0.55_0.02_60)] sm:flex-row">
         <span>© {new Date().getFullYear()} {site.name}. All rights reserved.</span>
         <span>GAF Certified · BBB Accredited · Licensed &amp; Insured</span>
       </div>

@@ -1,98 +1,82 @@
 import type { Metadata } from 'next';
 import PageHeader from '@/components/PageHeader';
-import Section from '@/components/Section';
-import SectionHead from '@/components/SectionHead';
 import Reveal from '@/components/Reveal';
+import MediaImg from '@/components/MediaImg';
+import TeamGrid from '@/components/TeamGrid';
+import AreaMap from '@/components/AreaMap';
 import Certifications from '@/components/Certifications';
-import ServiceAreas from '@/components/ServiceAreas';
 import CtaBand from '@/components/CtaBand';
-import JsonLd from '@/components/JsonLd';
-import { site, team, differentiators } from '@/lib/content';
+import { site } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'About Ringco Roofing — Family-Owned in Oklahoma County',
-  description:
-    'Roofing has been in the Ring family for decades. Learn why Ringco runs its own crew, why family ownership matters for your warranty, and who’s actually on your roof.',
+  title: 'About Ringco Roofing — Family-Owned in Oklahoma County, OK',
+  description: 'Meet the family behind Ringco Roofing and Construction. Local, GAF-certified, and serving 15 cities across the Oklahoma City metro with a 15-year labor warranty.',
   alternates: { canonical: '/about' },
-};
-
-const orgSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: site.name,
-  url: `${site.url}/about`,
-  telephone: site.phone,
-  email: site.email,
-  founder: { '@type': 'Person', name: site.owner },
-  sameAs: [site.facebook],
-  description: 'Family-owned roofing, siding and gutter company serving Oklahoma County with an in-house crew.',
 };
 
 export default function AboutPage() {
   return (
     <>
-      <JsonLd data={orgSchema} />
+      {/* Warm, personal hero — crew/truck/local area, not a roof close-up */}
       <PageHeader
-        eyebrow="About Ringco"
-        title="Family-owned, local, and still here for your warranty."
-        sub="The roofing companies that chase storms out of a rented truck don’t answer the phone in year three. We’re built to."
+        eyebrow="About us"
+        title="Real local people. Really good roofs."
+        sub="Ringco is a family business, not a storm-chasing franchise. When you call, you get a Ring — not a call center."
+        image="/media/about-hero.jpg"
+        imageLabel="crew / truck photo"
       />
 
-      {/* Real history block — the genuine differentiator no competitor can copy */}
-      <Section>
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+      {/* Our story — dense trust copy, simple fade-up, no decoration competing */}
+      <section className="px-[6vw] py-24">
+        <div className="mx-auto grid max-w-wrap items-center gap-14 lg:grid-cols-2">
           <Reveal>
             <p className="eyebrow text-accent-deep">Our story</p>
-            <h2 className="mb-5 mt-3.5 font-display text-[clamp(26px,3.4vw,40px)] font-bold">Roofing has been in the Ring family for decades.</h2>
-            <p className="mb-4 text-[17px] leading-relaxed text-muted">
-              {site.legacyNote} That isn’t a marketing line — it’s the reason we do the work the way we do. When your name is on the company and you live in the same metro as your customers, cutting corners isn’t an option.
-            </p>
-            <p className="text-[17px] leading-relaxed text-muted">
-              Under {site.owner}, Ringco has grown into a full-exterior contractor — roofing, siding, and gutters — while staying small enough that the owner still knows your job by name.
-            </p>
+            <h2 className="mb-5 mt-3.5 font-display text-[clamp(28px,4vw,42px)] font-bold">Built on handshakes, backed by warranty paper.</h2>
+            <div className="space-y-4 text-[16.5px] leading-relaxed text-muted">
+              <p>
+                Ringco started the way most good Oklahoma businesses do: one crew, one truck, and a promise to do the job like it was our own house. Storm after storm, that promise turned into 1,200+ roofs across the metro.
+              </p>
+              <p>
+                We stayed family-owned on purpose. It means the person who quotes your roof is the person who answers when something needs attention — this year or fourteen years from now. It&rsquo;s also why we put a 15-year labor warranty in writing when most of the industry stops at two.
+              </p>
+              <p>
+                And because Oklahoma weather doesn&rsquo;t respect business hours, neither do we: storm damage gets a response 24/7, and every inspection is free.
+              </p>
+            </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="rounded-[22px] border border-line bg-card p-8 shadow-[0_24px_50px_-34px_oklch(0.2_0.02_60/0.35)]">
-              {differentiators.map((d, i) => (
-                <div key={d.title} className={i > 0 ? 'mt-6 border-t border-line pt-6' : ''}>
-                  <h3 className="mb-1.5 font-display text-[18px] font-bold">{d.title}</h3>
-                  <p className="text-[15px] leading-relaxed text-muted">{d.body}</p>
-                </div>
-              ))}
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_30px_60px_-40px_oklch(0.2_0.02_60/0.5)]">
+              <MediaImg src="/media/about-story.jpg" alt="The Ringco crew on site" slotLabel="crew on-site photo" sizes="(max-width:1024px) 100vw, 50vw" />
             </div>
           </Reveal>
         </div>
-      </Section>
+      </section>
 
-      {/* Team / faces */}
-      <Section tone="panel">
-        <SectionHead
-          tone="dark"
-          eyebrow="Who’s on your roof"
-          title="Real people, named — not an anonymous “we.”"
-          sub="These are the people our customers mention by name in their reviews. Photos coming soon."
-        />
-        <div className="mt-12 grid gap-6 sm:grid-cols-3">
-          {team.map((m, i) => (
-            <Reveal key={m.name} delay={i * 0.08}>
-              <div className="rounded-[18px] border border-[oklch(0.26_0.02_55)] bg-[oklch(0.19_0.02_50)] p-7 text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent font-display text-[20px] font-bold text-accent-ink">{m.initials}</div>
-                <div className="font-display text-[18px] font-bold text-[oklch(0.98_0.01_80)]">{m.name}</div>
-                <div className="text-[14px] text-[oklch(0.6_0.02_60)]">{m.role}</div>
-              </div>
-            </Reveal>
-          ))}
+      {/* Team — photos are the main event */}
+      <section className="bg-[oklch(0.94_0.012_78)] px-[6vw] py-24">
+        <div className="mx-auto max-w-wrap">
+          <Reveal>
+            <p className="eyebrow text-accent-deep">The team</p>
+            <h2 className="mb-12 mt-3.5 max-w-[560px] font-display text-[clamp(28px,4vw,42px)] font-bold">The people on your roof.</h2>
+          </Reveal>
+          <TeamGrid />
         </div>
-      </Section>
+      </section>
+
+      {/* Service area — spatial trust beats a text list */}
+      <section className="bg-panel px-[6vw] py-24">
+        <div className="mx-auto max-w-wrap">
+          <Reveal>
+            <p className="eyebrow text-blue">Where we work</p>
+            <h2 className="mb-4 mt-3.5 max-w-[560px] font-display text-[clamp(28px,4vw,42px)] font-bold text-[oklch(0.98_0.01_80)]">If you can see downtown OKC from a ladder, we probably serve you.</h2>
+            <p className="mb-12 max-w-[560px] text-[16px] text-[oklch(0.72_0.02_60)]">Based in {site.area}, on roofs across the whole metro.</p>
+          </Reveal>
+          <AreaMap />
+        </div>
+      </section>
 
       <Certifications />
-
-      <Section>
-        <SectionHead eyebrow="Where we work" title="Proudly serving Oklahoma County." />
-        <div className="mt-10"><ServiceAreas /></div>
-      </Section>
-
-      <CtaBand title="Work with a roofer who’ll still be here in year three." sub="Family-owned, our own crew, and a 15-year labor warranty. Book a free inspection." />
+      <CtaBand />
     </>
   );
 }

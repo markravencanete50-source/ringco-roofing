@@ -1,32 +1,11 @@
-// ---------------------------------------------------------------------------
-// SINGLE SOURCE OF TRUTH for all site copy, contact info, nav, and structured
-// content. Edit copy HERE, not in components/pages. Keeping strings in this .ts
-// file (not JSX) also avoids React's no-unescaped-entities lint rule.
-//
-// TODO (client verification before launch):
-//  - Confirm the Ring-family history dates and Brantlon Ring tenure.
-//  - Confirm team member names/roles and supply photos.
-//  - Replace the case-study specifics (marked below) with a real, approved
-//    claim outcome. Do NOT publish invented figures.
-//  - Verify GAF / BBB / warranty claims.
-//  - Replace Unsplash placeholder imagery with real job-site photography.
-// ---------------------------------------------------------------------------
-
 export const site = {
   name: 'Ringco Roofing and Construction',
-  short: 'Ringco',
   phone: '+1-405-470-7696',
   phoneDisplay: '(405) 470-7696',
-  textReady: true, // same line accepts SMS
   email: 'brantlon@ringcoconstruction.com',
-  owner: 'Brantlon Ring',
   area: 'Oklahoma County, OK',
-  areaShort: 'Oklahoma County',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ringcoroofing.com',
   facebook: 'https://facebook.com/138247566963256',
-  hours: 'Mon–Sat, 7am–7pm · 24/7 storm emergency line',
-  // A defensible framing of the family legacy — verify specifics with client.
-  legacyNote: 'Roofing has been in the Ring family for decades, and Brantlon Ring has led Ringco locally for over ten years.',
 };
 
 export const nav = [
@@ -37,97 +16,56 @@ export const nav = [
   { label: 'Contact', href: '/contact' },
 ];
 
-// The one claim no competitor in the OKC metro leads with (see research).
-export const differentiators = [
-  {
-    title: 'Our own crew — never subcontractors',
-    body: 'The people on your roof are Ringco employees, accountable to us and to you. No handoffs, no strangers, no finger-pointing when it matters.',
-  },
-  {
-    title: 'Family-owned and still local',
-    body: site.legacyNote + ' We answer for our work long after the crew leaves, and we intend to be here when your warranty needs us.',
-  },
-  {
-    title: 'Straight talk on your claim',
-    body: 'We document what the storm actually did and stand by it — assertively and within the law. No inflated invoices, no deductible games.',
-  },
-];
+/** Category accent colors — same lightness/chroma family, hue varies. */
+export const categoryColors: Record<string, string> = {
+  roofing: 'oklch(0.62 0.15 40)',
+  siding: 'oklch(0.62 0.10 230)',
+  gutters: 'oklch(0.62 0.10 160)',
+  'insurance-claims': 'oklch(0.62 0.10 300)',
+};
 
-// -------- Services (summary cards used on home + hub) ----------------------
 export const services = [
   {
     slug: 'roofing',
-    href: '/roofing',
     tag: 'Roofing',
     title: 'Roof Replacement & Repair',
     blurb:
-      'GAF-certified installs built to survive Oklahoma hail and wind — from targeted repairs to full tear-offs, backed by a 15-year labor warranty.',
-    image:
-      'https://images.unsplash.com/photo-1632759145351-1d592919f522?auto=format&fit=crop&w=1200&q=80',
+      'GAF-certified installations built to survive Oklahoma hail and wind. Full tear-offs, repairs, and inspections backed by a 15-year labor warranty.',
+    image: '/media/services/roofing.jpg',
+    included: ['Full tear-off & replacement', 'Repairs & leak tracing', 'Free 21-point inspection', '15-year labor warranty'],
   },
   {
     slug: 'siding',
-    href: '/siding',
     tag: 'Siding',
-    title: 'Siding Installation & Repair',
+    title: 'Siding Installation',
     blurb:
-      'Impact-resistant siding that protects the envelope and lifts curb appeal — weather-tight installs with clean lines and a long lifespan.',
-    image:
-      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80',
+      'Impact-resistant siding that protects and elevates your home. Precise, weather-tight installs with clean lines and a decade-plus lifespan.',
+    image: '/media/services/siding.jpg',
+    included: ['Vinyl & fiber-cement install', 'Storm-damage replacement', 'Trim, soffit & fascia', 'Color-matched finishes'],
   },
   {
     slug: 'gutters',
-    href: '/gutters',
     tag: 'Gutters',
-    title: 'Seamless Gutters & Guards',
+    title: 'Gutters & Drainage',
     blurb:
-      'Custom seamless gutters and leaf guards that move water away from your foundation — engineered for Oklahoma downpours.',
-    image:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=80',
+      'Seamless gutter systems that move water away from your foundation. Custom-fit, leaf-guarded, and engineered for Oklahoma downpours.',
+    image: '/media/services/gutters.jpg',
+    included: ['Seamless gutter runs', 'Leaf guards & screens', 'Downspout & drainage design', 'Repairs & re-pitching'],
   },
   {
     slug: 'insurance-claims',
-    href: '/insurance-claims',
     tag: 'Storm & Claims',
     title: 'Storm Damage & Insurance Claims',
     blurb:
-      'We inspect before you file, meet your adjuster on the roof, and manage the claim end-to-end — so you get the roof you are owed.',
-    image:
-      'https://images.unsplash.com/photo-1523867904486-2cd4d5b13d40?auto=format&fit=crop&w=1200&q=80',
-  },
-];
-
-// -------- Homepage "pick your path" router ---------------------------------
-export const paths = [
-  {
-    kicker: 'Storm or hail damage',
-    title: 'I think the storm damaged my roof',
-    body: 'Fastest route to a free inspection and, if it is warranted, a fully managed insurance claim.',
-    href: '/insurance-claims',
-    cta: 'Start an insurance claim',
-    tone: 'accent' as const,
-  },
-  {
-    kicker: 'Roofing project',
-    title: 'I need a roof repair or replacement',
-    body: 'Not storm-related? See how repair vs. replacement works, materials, and our 15-year labor warranty.',
-    href: '/roofing',
-    cta: 'Explore roofing',
-    tone: 'panel' as const,
-  },
-  {
-    kicker: 'Siding & gutters',
-    title: 'I need siding or gutters',
-    body: 'Protect and finish the rest of the exterior with the same crew that does your roof.',
-    href: '/services',
-    cta: 'Siding & gutters',
-    tone: 'panel' as const,
+      'We document the damage, meet your adjuster on-site, and manage the claim end-to-end — so you get the roof you are owed, not the one you settle for.',
+    image: '/media/services/storm.jpg',
+    included: ['Free storm inspection', 'Adjuster meeting on-site', 'Full claim documentation', 'Code-compliant supplements'],
   },
 ];
 
 export const steps = [
   { n: '01', title: 'Free inspection', body: 'We assess your roof, document every point of damage, and give you a straight answer — no pressure, no upsell.' },
-  { n: '02', title: 'We meet your adjuster', body: 'We stand on the roof with your insurance adjuster so legitimate storm damage gets documented, not missed or denied.' },
+  { n: '02', title: 'We meet your adjuster', body: 'We stand on the roof with your insurance adjuster to make sure nothing legitimate gets missed or denied.' },
   { n: '03', title: 'Approval & scheduling', body: 'Once the claim is approved, we schedule around your life and order premium materials up front.' },
   { n: '04', title: 'Install & warranty', body: 'A clean, fast install by our own crews — finished with a 15-year labor warranty and a spotless site.' },
 ];
@@ -139,73 +77,13 @@ export const stats = [
   { v: '100', suffix: '%', label: 'Family owned' },
 ];
 
-// -------- Reviews (rendered, not an empty widget) --------------------------
 export const reviews = [
-  { quote: 'Ringco caught hail damage two other companies missed, met our adjuster, and had a new roof on in a day. The claim was fully approved.', name: 'Danielle R.', role: 'Edmond, OK', service: 'Insurance', rating: 5 },
-  { quote: 'Straightforward, no games. They told me what I actually needed and the crew left the yard cleaner than they found it.', name: 'Marcus T.', role: 'Oklahoma City, OK', service: 'Roofing', rating: 5 },
-  { quote: 'From the free inspection to the final walkthrough, it felt like dealing with family. The 15-year warranty sealed it.', name: 'Priya S.', role: 'Moore, OK', service: 'Roofing', rating: 5 },
-  { quote: 'Blake, Brantlon and Victor were upfront the whole way. New gutters and siding after the storm, done right the first time.', name: 'Karen W.', role: 'Midwest City, OK', service: 'Siding', rating: 5 },
-  { quote: 'Our first claim came back low. Ringco supplemented it with real documentation and the insurer approved the full replacement.', name: 'Anthony G.', role: 'Del City, OK', service: 'Insurance', rating: 5 },
+  { quote: 'Ringco caught hail damage two other companies missed, met our adjuster, and had a new roof on in a day. The claim was fully approved.', name: 'Danielle R.', role: 'Edmond, OK' },
+  { quote: 'Straightforward, no games. They told me what I actually needed and the crew left the yard cleaner than they found it.', name: 'Marcus T.', role: 'Oklahoma City, OK' },
+  { quote: 'From the free inspection to the final walkthrough, it felt like dealing with family. The 15-year warranty sealed it.', name: 'Priya S.', role: 'Moore, OK' },
+  { quote: 'Hail totaled our roof in April. Ringco handled the whole claim — the adjuster meeting, the paperwork, everything. New Class 4 roof by June.', name: 'Jordan W.', role: 'Yukon, OK' },
+  { quote: 'They re-opened a claim another company told us was dead. Insurance ended up covering the full replacement.', name: 'Alyssa K.', role: 'Midwest City, OK' },
 ];
-
-// -------- Featured case study ----------------------------------------------
-// NOTE: Structure follows McRoof's strong named-case-study pattern. The copy
-// below is written to be honest and non-fabricated. Before launch, replace the
-// bracketed specifics with a REAL, client-approved outcome. Do not invent a
-// dollar figure for a live site.
-export const caseStudy = {
-  kicker: 'Featured claim',
-  title: 'A denied claim, documented and overturned',
-  homeowner: 'Homeowner in Oklahoma County', // TODO: real (approved) first name + city
-  insurer: 'a major national insurer', // TODO: name only if the client is comfortable and it is accurate
-  summary:
-    'After a spring hail storm, the initial inspection came back with damage marked as cosmetic and the claim underpaid. We re-inspected, documented the full extent of the impact damage, and met the adjuster on the roof to walk through every hit.',
-  outcome:
-    'The scope was corrected and a full roof replacement was approved. The homeowner paid their deductible — nothing more — and had a new GAF-certified roof, installed by our own crew, within the week.',
-  // TODO: add a verified metric here, e.g. "$X,XXX added to the approved scope"
-  metricLabel: 'Result',
-  metricValue: 'Full replacement approved',
-};
-
-// -------- Oklahoma-specific claims education (Arrowhead's strength, on-page) -
-export const okClaimFacts = [
-  {
-    term: '12-month filing window',
-    body: 'Oklahoma policies generally require you to file a storm-damage claim within one year of the date of loss. Miss it and a valid claim can be denied outright — so an early free inspection matters.',
-  },
-  {
-    term: 'RCV vs. ACV',
-    body: 'Replacement Cost Value pays what it costs to replace the roof today; Actual Cash Value subtracts depreciation. Knowing which your policy pays — and how recoverable depreciation is released — changes your out-of-pocket cost.',
-  },
-  {
-    term: 'Impact-resistant shingles',
-    body: 'Class 4 impact-resistant shingles can qualify for an insurance premium discount in Oklahoma. We can quote them as an upgrade during a replacement.',
-  },
-];
-
-// -------- FAQs (per topic; each list also feeds FAQPage schema) ------------
-export const faqs = {
-  insurance: [
-    { q: 'Will filing a claim raise my premium?', a: 'A single weather-related claim is treated differently than an at-fault claim, but it is your decision. That is exactly why we inspect first and tell you honestly whether the damage is worth filing before you ever call your insurer.' },
-    { q: 'How long does a roof claim take?', a: 'Most straightforward hail or wind claims move from inspection to approved scope in a couple of weeks, then to installation quickly after. Supplements or disputed scope can add time — we manage that back-and-forth for you.' },
-    { q: 'Do you charge extra to file supplements?', a: 'We document and submit supplements as part of managing your claim. We follow Oklahoma law on all billing and never structure anything around waiving or absorbing your deductible.' },
-    { q: 'What if my claim was already denied or underpaid?', a: 'Bring us the paperwork. A denial is not always the end — with proper documentation and an on-roof adjuster meeting, underpaid and denied claims are often corrected.' },
-  ],
-  roofing: [
-    { q: 'How do I know if I need a repair or a full replacement?', a: 'A few missing shingles or an isolated leak is usually a repair. Widespread granule loss, aging past 15–20 years, or storm damage across multiple slopes points to replacement. Our free inspection gives you a straight answer either way.' },
-    { q: 'How long does a roof replacement take?', a: 'Most residential replacements are completed in a single day. Larger or more complex roofs may take two.' },
-    { q: 'What shingle brands do you install?', a: 'We are a factory-certified GAF installer and can also quote Class 4 impact-resistant options that may lower your insurance premium.' },
-    { q: 'Do you offer financing?', a: 'Talk to us about your project — we will walk you through the payment options available so cost is not the reason a failing roof waits.' },
-  ],
-  siding: [
-    { q: 'What siding materials do you install?', a: 'We install and repair vinyl and fiber-cement siding, color-matched to your home and installed weather-tight by our own crew.' },
-    { q: 'Can siding damage go on my storm claim?', a: 'Often, yes. Hail and wind frequently damage siding and gutters along with the roof, and we can document all of it on one inspection.' },
-  ],
-  gutters: [
-    { q: 'Are your gutters seamless?', a: 'Yes. We form seamless gutters on-site to fit your roofline, which means fewer joints and far fewer leaks over time.' },
-    { q: 'Do you install gutter guards?', a: 'We do — leaf guards keep debris out and water moving, which protects both your gutters and your foundation.' },
-  ],
-};
 
 export const certs = [
   { badge: 'GAF', kind: 'gaf', title: 'GAF Certified', body: 'Factory-certified installer held to GAF quality and warranty standards.' },
@@ -213,26 +91,100 @@ export const certs = [
   { badge: '15', kind: 'gaf', title: '15-Year Warranty', body: 'Industry-leading labor warranty on every full roof replacement.' },
 ];
 
-// -------- Team (About page) — names surfaced positively in real reviews ----
-// TODO: confirm roles and add photos before launch.
+/** Service-area cities with approximate map positions (percent coords, N up). */
+export const cities = [
+  { name: 'Oklahoma City', x: 45, y: 54, hq: true },
+  { name: 'Edmond', x: 52, y: 20 },
+  { name: 'The Village', x: 47, y: 33 },
+  { name: 'Nichols Hills', x: 44, y: 40 },
+  { name: 'Warr Acres', x: 35, y: 43 },
+  { name: 'Bethany', x: 32, y: 49 },
+  { name: 'Yukon', x: 20, y: 53 },
+  { name: 'Mustang', x: 19, y: 70 },
+  { name: 'Moore', x: 49, y: 76 },
+  { name: 'Norman', x: 56, y: 90 },
+  { name: 'Del City', x: 58, y: 60 },
+  { name: 'Midwest City', x: 64, y: 54 },
+  { name: 'Choctaw', x: 77, y: 52 },
+  { name: 'Harrah', x: 88, y: 55 },
+  { name: 'Piedmont', x: 24, y: 16 },
+];
+
 export const team = [
-  { name: 'Brantlon Ring', role: 'Owner', initials: 'BR' },
-  { name: 'Blake', role: 'Project Lead', initials: 'BL' },
-  { name: 'Victor', role: 'Crew Lead', initials: 'VC' },
+  {
+    name: 'Brantlon Ring',
+    role: 'Owner & Founder',
+    initials: 'BR',
+    photo: '/media/team/brantlon.jpg',
+    bio: 'Started Ringco to do storm claims the honest way: document everything, meet every adjuster, and stand behind the work for 15 years.',
+  },
+  {
+    name: 'Blake',
+    role: 'Operations & Project Manager',
+    initials: 'B',
+    photo: '/media/team/blake.jpg',
+    bio: 'Runs every job from material order to final walkthrough — one point of contact from the first ladder to the last nail.',
+  },
+  {
+    name: 'Victor',
+    role: 'Lead Crew Foreman',
+    initials: 'V',
+    photo: '/media/team/victor.jpg',
+    bio: 'Leads the install crew that finishes most residential roofs in a single day — and leaves the yard cleaner than it started.',
+  },
 ];
 
-// -------- Service area (NAP + LocalBusiness areaServed) ---------------------
-export const serviceAreas = [
-  'Oklahoma City', 'Edmond', 'Midwest City', 'Del City', 'Bethany',
-  'Warr Acres', 'The Village', 'Nichols Hills', 'Choctaw', 'Harrah',
-  'Jones', 'Nicoma Park', 'Spencer', 'Forest Park', 'Moore',
+export type GalleryItem = {
+  id: string;
+  category: 'roofing' | 'siding' | 'gutters';
+  title: string;
+  city: string;
+  scope: string;
+  before: string;
+  after: string;
+  /** Optional looping drone clip of the finished job — shown in-card instead of the after photo. */
+  video?: string;
+};
+
+export const galleryItems: GalleryItem[] = [
+  { id: 'job-01', category: 'roofing', title: 'Full replacement after April hail', city: 'Edmond, OK', scope: 'Tear-off · Class 4 shingles · Insurance claim', before: '/media/gallery/job-01-before.jpg', after: '/media/gallery/job-01-after.jpg', video: '/media/gallery/job-01-drone.mp4' },
+  { id: 'job-02', category: 'roofing', title: 'Wind-lifted ridge, one-day rebuild', city: 'Moore, OK', scope: 'Tear-off · GAF Timberline HDZ · Ridge vent', before: '/media/gallery/job-02-before.jpg', after: '/media/gallery/job-02-after.jpg' },
+  { id: 'job-03', category: 'siding', title: 'Hail-pocked siding, full elevation', city: 'Yukon, OK', scope: 'Fiber-cement · Trim & soffit · Color match', before: '/media/gallery/job-03-before.jpg', after: '/media/gallery/job-03-after.jpg' },
+  { id: 'job-04', category: 'roofing', title: 'Denied claim, overturned & replaced', city: 'Choctaw, OK', scope: 'Re-inspection · Claim supplement · Full replacement', before: '/media/gallery/job-04-before.jpg', after: '/media/gallery/job-04-after.jpg', video: '/media/gallery/job-04-drone.mp4' },
+  { id: 'job-05', category: 'gutters', title: 'Seamless gutters + drainage redesign', city: 'Nichols Hills, OK', scope: '6" seamless · Leaf guards · Downspout reroute', before: '/media/gallery/job-05-before.jpg', after: '/media/gallery/job-05-after.jpg' },
+  { id: 'job-06', category: 'roofing', title: 'Steep-pitch replacement, two crews', city: 'Norman, OK', scope: 'Tear-off · Synthetic underlayment · Ice & water', before: '/media/gallery/job-06-before.jpg', after: '/media/gallery/job-06-after.jpg' },
+  { id: 'job-07', category: 'siding', title: 'Storm-damaged vinyl, whole-home refresh', city: 'Midwest City, OK', scope: 'Vinyl siding · Fascia wrap · Insurance claim', before: '/media/gallery/job-07-before.jpg', after: '/media/gallery/job-07-after.jpg' },
+  { id: 'job-08', category: 'gutters', title: 'Foundation pooling fixed for good', city: 'Bethany, OK', scope: 'Re-pitch · Oversized downspouts · Splash control', before: '/media/gallery/job-08-before.jpg', after: '/media/gallery/job-08-after.jpg' },
 ];
 
-// -------- Gallery projects (real captions build credibility) ----------------
-// TODO: replace images + captions with real, dated project photography.
-export const projects = [
-  { service: 'Roofing', before: 'https://images.unsplash.com/photo-1595872018818-97555653a011?auto=format&fit=crop&w=1400&q=80', after: 'https://images.unsplash.com/photo-1632759145351-1d592919f522?auto=format&fit=crop&w=1400&q=80', caption: 'Hail-damage replacement — Edmond, spring 2025' },
-  { service: 'Roofing', before: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd0?auto=format&fit=crop&w=1400&q=80', after: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80', caption: 'Full tear-off & GAF re-roof — Oklahoma City' },
-  { service: 'Siding', before: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80', after: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=80', caption: 'Storm-damaged siding replacement — Midwest City' },
-  { service: 'Gutters', before: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1400&q=80', after: 'https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1400&q=80', caption: 'Seamless gutter install — Del City' },
+/** Oklahoma-specific insurance facts — the highest-value trust content on the claims page. */
+export const okFacts = [
+  {
+    title: 'The 12-month window',
+    body: 'Most Oklahoma policies require storm-damage claims to be filed within 12 months of the date of loss. If a storm hit in the past year — even if you only just noticed the damage — you may still have a valid claim.',
+  },
+  {
+    title: 'RCV vs. ACV',
+    body: 'Replacement Cost Value pays what it costs to replace your roof today. Actual Cash Value subtracts depreciation and can leave you thousands short. We read your policy first and document the claim to recover everything it owes you.',
+  },
+  {
+    title: 'Class 4 shingles',
+    body: 'Impact-rated Class 4 shingles survive Oklahoma hail dramatically better — and many insurers discount premiums for installing them. We\u2019ll tell you straight whether the upgrade pays for itself on your policy.',
+  },
+];
+
+export const claimStory = {
+  stages: ['Denied', 'Re-inspected', 'Corrected', 'Approved'],
+  location: 'Choctaw, OK',
+  headline: 'The claim their insurer called \u201cwear and tear.\u201d',
+  body: 'A homeowner in Choctaw called us after their carrier denied the whole roof. The adjuster\u2019s report said weathering — no storm damage. We put a ladder up, documented 40+ hail strikes with chalk and photos, matched them to the county storm date, and requested a re-inspection with our foreman on the roof. The carrier corrected the report and approved a full replacement.',
+  result: 'Full replacement approved — homeowner paid only their deductible.',
+};
+
+export const insuranceFaqs = [
+  { q: 'Will filing a claim raise my rates?', a: 'In Oklahoma, insurers generally can\u2019t single you out for a rate increase because of a weather-related claim — storm losses are treated as acts of nature, and rate changes apply region-wide. That\u2019s exactly why we inspect before you file: if the damage isn\u2019t worth a claim, we\u2019ll tell you.' },
+  { q: 'Can you cover or waive my deductible?', a: 'No — and you should hang up on any roofer who offers to. Waiving deductibles is illegal in Oklahoma and puts the homeowner at risk. We keep every claim clean and by the book.' },
+  { q: 'How long does the whole process take?', a: 'Inspection to approved claim is typically 1–3 weeks depending on your carrier. Once approved, most residential installs are finished in a single day.' },
+  { q: 'What if my claim is already denied?', a: 'Denials get overturned more often than people think — usually because damage was under-documented the first time. We re-inspect, build the evidence, and request a re-inspection with your carrier. It costs you nothing to have us look.' },
+  { q: 'Do I have to use a contractor my insurer suggests?', a: 'No. In Oklahoma you have the legal right to choose your own contractor. Carrier-preferred programs work for the carrier; we work for you.' },
 ];

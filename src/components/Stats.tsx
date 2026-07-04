@@ -32,7 +32,7 @@ function Counter({ value, suffix }: { value: string; suffix: string }) {
 
 export default function Stats() {
   return (
-    <section className="bg-panel px-[6vw] py-28">
+    <section className="bg-panel px-[6vw] pb-28">
       <div className="mx-auto grid max-w-wrap gap-8 rounded-3xl border border-[oklch(0.26_0.02_55)] bg-[oklch(0.19_0.02_50)] px-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="text-center">

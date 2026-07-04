@@ -11,11 +11,20 @@
   --panel-3:     oklch(0.12 0.018 50);
   --card:        oklch(0.99 0.008 80);
   --line:        oklch(0.90 0.012 75);
-  --accent:      oklch(0.68 0.15 55);
-  --accent-hi:   oklch(0.75 0.15 55);
-  --accent-deep: oklch(0.58 0.13 55);
-  --accent-ink:  oklch(0.16 0.02 50);
+
+  /* Weathered orange-red accent — CTAs only, never decorative. */
+  --accent:      oklch(0.62 0.155 40);
+  --accent-hi:   oklch(0.69 0.155 42);
+  --accent-deep: oklch(0.53 0.140 38);
+  --accent-ink:  oklch(0.99 0.008 80);
   --blue:        oklch(0.68 0.15 230);
+
+  /* Motion tokens — define once, reuse everywhere. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 200ms;   /* hover states, taps, toggles */
+  --dur-comp: 400ms;    /* component transitions */
+  --dur-section: 800ms; /* section reveals */
+
   --font-display: var(--f-display);
   --font-body: var(--f-body);
 }
@@ -35,16 +44,17 @@ body {
 img, video { display: block; }
 
 .eyebrow {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 13px;
   letter-spacing: .16em;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
 /* focus visibility for accessibility */
 :focus-visible { outline: 2px solid var(--accent-hi); outline-offset: 2px; }
 
+/* Global reduced-motion kill-switch: disables all transform/opacity motion site-wide. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
