@@ -1,3 +1,3 @@
-export function clsx(...parts: (string | false | null | undefined)[]) {
-  return parts.filter(Boolean).join(' ');
+export function clsx(...args: Array<string | false | null | undefined>): string {
+  return args.filter(Boolean).join(' ');
 }

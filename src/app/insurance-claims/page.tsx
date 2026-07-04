@@ -20,7 +20,7 @@ const points = [
 export default function InsuranceClaimsPage() {
   return (
     <>
-      <PageHeader eyebrow="Storm & insurance claims" title="Get the roof you\u2019re owed \u2014 not the one you settle for." sub="Insurance companies are experts at paying less. We\u2019re experts at documenting what the storm actually did. That\u2019s the whole difference." />
+      <PageHeader eyebrow="Storm & insurance claims" title="Get the roof you’re owed — not the one you settle for." sub="Insurance companies are experts at paying less. We’re experts at documenting what the storm actually did. That’s the whole difference." />
       <section className="px-[6vw] py-24">
         <div className="mx-auto grid max-w-wrap gap-6 md:grid-cols-2">
           {points.map((p, i) => (

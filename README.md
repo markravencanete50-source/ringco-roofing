@@ -1,61 +1,34 @@
-# Ringco Roofing — Website
+# Ringco Roofing & Construction — Website
 
-Premium marketing site for Ringco Roofing and Construction (Oklahoma County, OK).
+Next.js 14 (App Router) + Tailwind CSS + TypeScript implementation of the Ringco marketing site.
+Design reference: `Ringco Homepage 2026.dc.html` (open in a browser to see the target design — it is git-ignored and not part of the app).
 
-**Stack:** Next.js 15 (App Router, TypeScript) · Tailwind CSS · Framer Motion · Firebase (Firestore + Auth) · Cloudinary · Resend · Vercel
+## Quick start
 
----
-
-## Pages
-- `/` — Home: hero video, services, claim process, animated stats, before/after slider, reviews, CTAs
-- `/services` — Service detail sections + FAQ
-- `/insurance-claims` — Dedicated conversion page (the key differentiator vs. competitors)
-- `/gallery` — Cloudinary-driven project gallery, filterable, lightbox (ISR, revalidates every 60s)
-- `/about` — Family-owned story + certifications
-- `/contact` — 3-step lead form → Firestore + email
-- `/admin` — Auth-protected photo uploader (Cloudinary widget → Firestore metadata)
-
----
-
-## 1. Install
 ```bash
 npm install
-cp .env.example .env.local   # then fill in the values below
-npm run dev
+npm run dev        # http://localhost:3000
+npm run build      # production build
 ```
 
-## 2. Firebase
-1. Create a Firebase project → enable **Firestore** and **Authentication** (Email/Password).
-2. Add one admin user under Authentication → Users (this is who logs into `/admin`).
-3. Web app config → fill the `NEXT_PUBLIC_FIREBASE_*` vars.
-4. Service account (Project Settings → Service accounts → Generate key) → fill the three `FIREBASE_ADMIN_*` vars. Paste the private key with literal `\n` newlines, wrapped in quotes.
-5. Deploy the security rules in `firestore.rules` (Firestore → Rules → paste → Publish).
+## Structure
 
-Collections are created automatically on first write: `leads`, `gallery`.
+- `src/app/` — routes: `/` (home), `/services`, `/insurance-claims`
+- `src/components/` — one component per homepage section (Hero, Marquee, Services, Process, Stats, BeforeAfter, Certifications, Reviews, CtaBand) plus shared Header, Footer, Button, PageHeader, Reveal (scroll-in animation), StickyMobileCta
+- `src/lib/content.ts` — ALL copy, nav, services, stats, reviews, contact info. Edit content here, not in components.
+- `tailwind.config.ts` + `src/app/globals.css` — design tokens (oklch color vars, Space Grotesk / Manrope fonts, wrap width)
 
-## 3. Cloudinary
-1. Create a Cloudinary account → note your **cloud name**.
-2. Settings → Upload → add an **unsigned** upload preset named `ringco_gallery` (folder `ringco/gallery`).
-3. Fill `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`, and the API key/secret.
+## Notes for implementation
 
-## 4. Email notifications (Resend)
-1. Create a Resend account, verify the sending domain, create an API key.
-2. Fill `RESEND_API_KEY`, `LEAD_NOTIFY_TO`, `LEAD_NOTIFY_FROM`.
-   (If you skip this, leads still save to Firestore — only the email alert is skipped.)
+- Fonts load via `next/font/google` in `layout.tsx` (Space Grotesk = display, Manrope = body).
+- Images are Unsplash placeholders (`next.config.mjs` allows `images.unsplash.com`). Replace with real project photos before launch.
+- `Reveal` respects `prefers-reduced-motion`.
+- Phone/email/address live in `src/lib/content.ts` → `site`.
+- Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`) for canonical metadata.
 
-## 5. Deploy (Vercel)
-1. Push to GitHub.
-2. Import the repo in Vercel.
-3. Add every variable from `.env.example` under Project → Settings → Environment Variables.
-4. Deploy. Point the domain at Vercel, and it issues SSL automatically.
+## TODO before launch
 
----
-
-## How the client uses it
-- **See leads:** Firebase Console → Firestore → `leads` collection (newest first). Each lead also arrives by email.
-- **Upload project photos:** go to `/admin`, sign in, add a title + category, click **Upload photo**. New photos appear on `/gallery` within a minute.
-
-## Notes
-- Swap the hero video `src` in `src/components/Hero.tsx` for Ringco's own footage.
-- Replace the Unsplash placeholder images in `src/lib/content.ts` and the service/about pages with real Ringco photography.
-- The lead form uses a honeypot + server-side validation; the admin panel is gated by Firebase Auth.
+- [ ] Replace Unsplash placeholders with real job-site photography
+- [ ] Real logo asset in Header/Footer
+- [ ] Hook the CTA/contact actions to a form or booking flow
+- [ ] Verify license/cert claims (GAF, BBB) with the client
