@@ -11,7 +11,7 @@ export default function CtaBand() {
   return (
     <section className="relative overflow-hidden bg-[radial-gradient(120%_120%_at_80%_0%,oklch(0.24_0.04_45)_0%,oklch(0.14_0.02_50)_60%)] px-[6vw] py-28">
       <Parallax className="absolute -inset-y-16 inset-x-0" factor={0.1}>
-        <div className="relative h-full w-full opacity-25">
+        <div className="relative h-full w-full animate-kenburns-slow opacity-25 [will-change:transform]">
           <MediaImg src="/media/cta-drone.jpg" alt="" slotLabel="" sizes="100vw" />
         </div>
       </Parallax>

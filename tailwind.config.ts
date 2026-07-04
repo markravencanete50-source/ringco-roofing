@@ -42,12 +42,19 @@ const config: Config = {
           from: { opacity: '0', transform: 'translateY(24px)' },
           to: { opacity: '1', transform: 'none' },
         },
+        /* Slow cinematic drift for background drone footage/stills. */
+        kenburns: {
+          '0%': { transform: 'scale(1) translate3d(0, 0, 0)' },
+          '100%': { transform: 'scale(1.09) translate3d(-1.5%, -1%, 0)' },
+        },
       },
       animation: {
         marquee: 'marquee 40s linear infinite',
         'marquee-slow': 'marquee 60s linear infinite',
         pulseRing: 'pulseRing 2s infinite',
         fadeUp: 'fadeUp 0.8s var(--ease-out) both',
+        kenburns: 'kenburns 26s ease-in-out infinite alternate',
+        'kenburns-slow': 'kenburns 40s ease-in-out infinite alternate',
       },
     },
   },

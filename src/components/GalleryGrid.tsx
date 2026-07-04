@@ -21,7 +21,7 @@ function CardMedia({ item }: { item: GalleryItem }) {
     return (
       <div className="relative aspect-video w-full overflow-hidden rounded-t-[18px] bg-[oklch(0.7_0.02_90)]">
         <video
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-section ease-out group-hover:scale-[1.05]"
           autoPlay muted loop playsInline
           onError={() => setVideoFailed(true)}
           src={item.video}
@@ -101,7 +101,7 @@ export default function GalleryGrid() {
 
       <div className={clsx('mt-10 grid gap-8 transition-opacity duration-micro md:grid-cols-2', fading ? 'opacity-0' : 'opacity-100')}>
         {items.map((g) => (
-          <div key={g.id} className="overflow-hidden rounded-[18px] border border-line bg-card shadow-[0_24px_50px_-38px_oklch(0.2_0.02_60/0.5)]">
+          <div key={g.id} className="group overflow-hidden rounded-[18px] border border-line bg-card shadow-[0_24px_50px_-38px_oklch(0.2_0.02_60/0.5)] transition-[transform,box-shadow,border-color] duration-comp ease-out hover:-translate-y-1.5 hover:border-[oklch(0.62_0.155_40/0.45)] hover:shadow-[0_34px_60px_-34px_oklch(0.2_0.02_60/0.62)]">
             <CardMedia item={g} />
             <div className="flex items-start justify-between gap-4 p-6">
               <div>

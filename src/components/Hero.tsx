@@ -13,7 +13,7 @@ export default function Hero() {
   return (
     <section className="relative h-screen max-h-[980px] min-h-[640px] overflow-hidden bg-[radial-gradient(120%_100%_at_20%_0%,oklch(0.22_0.03_50)_0%,oklch(0.15_0.02_50)_55%,oklch(0.11_0.018_50)_100%)]">
       <video
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full animate-kenburns object-cover [will-change:transform]"
         autoPlay muted loop playsInline
         poster="/media/home-hero-poster.jpg"
       >

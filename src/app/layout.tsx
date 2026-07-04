@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StickyMobileCta from '@/components/StickyMobileCta';
+import ScrollProgress from '@/components/ScrollProgress';
 import { site } from '@/lib/content';
 
 const display = Zilla_Slab({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--f-display', display: 'swap' });
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <ScrollProgress />
         <Header />
         <main>{children}</main>
         <Footer />
