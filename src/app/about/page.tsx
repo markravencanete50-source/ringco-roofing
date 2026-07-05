@@ -29,7 +29,7 @@ export default function AboutPage() {
       {/* Our story — dense trust copy, simple fade-up, no decoration competing */}
       <section className="px-[6vw] py-24">
         <div className="mx-auto grid max-w-wrap items-center gap-14 lg:grid-cols-2">
-          <Reveal>
+          <Reveal variant="left">
             <p className="eyebrow text-accent-deep">Our story</p>
             <h2 className="mb-5 mt-3.5 font-display text-[clamp(28px,4vw,42px)] font-bold">Built on handshakes, backed by warranty paper.</h2>
             <div className="space-y-4 text-[16.5px] leading-relaxed text-muted">
@@ -44,7 +44,7 @@ export default function AboutPage() {
               </p>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
+          <Reveal variant="right" delay={0.1}>
             <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_30px_60px_-40px_oklch(0.2_0.02_60/0.5)]">
               <MediaImg src="/media/about-story.jpg" alt="The Ringco crew on site" slotLabel="crew on-site photo" sizes="(max-width:1024px) 100vw, 50vw" />
             </div>

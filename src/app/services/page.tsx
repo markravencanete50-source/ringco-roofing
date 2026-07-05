@@ -4,6 +4,7 @@ import PageHeader from '@/components/PageHeader';
 import Reveal from '@/components/Reveal';
 import MediaImg from '@/components/MediaImg';
 import Button from '@/components/Button';
+import Magnetic from '@/components/Magnetic';
 import { services, categoryColors, site } from '@/lib/content';
 
 export const metadata: Metadata = {
@@ -75,8 +76,8 @@ export default function ServicesPage() {
             <p className="mt-2 max-w-[520px] text-[16px] text-[oklch(0.72_0.02_60)]">Call us and describe what you&rsquo;re seeing. We&rsquo;ll tell you in two minutes whether it&rsquo;s a repair, a replacement, or a claim.</p>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Button href={`tel:${site.phone}`}>Call {site.phoneDisplay}</Button>
-            <Button href="/contact" variant="outline">Request an inspection</Button>
+            <Magnetic><Button href={`tel:${site.phone}`}>Call {site.phoneDisplay}</Button></Magnetic>
+            <Magnetic><Button href="/contact" variant="outline">Request an inspection</Button></Magnetic>
           </div>
         </div>
       </section>
