@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { forwardRef } from 'react';
 import { clsx } from './clsx';
 
 type Props = {
@@ -8,6 +9,10 @@ type Props = {
   children: React.ReactNode;
   onClick?: () => void;
   type?: 'button' | 'submit';
+  /** Passed through so wrappers like <Magnetic> can drive transform/handlers. */
+  style?: React.CSSProperties;
+  onPointerMove?: (e: React.PointerEvent) => void;
+  onPointerLeave?: () => void;
 };
 
 const base =
@@ -17,8 +22,24 @@ const styles = {
   outline: 'border-[1.5px] border-[oklch(0.5_0.02_70)] text-[oklch(0.96_0.01_80)] hover:border-accent-hi hover:text-accent-hi',
 };
 
-export default function Button({ href, variant = 'primary', className, children, onClick, type = 'button' }: Props) {
+const Button = forwardRef<HTMLAnchorElement & HTMLButtonElement, Props>(function Button(
+  { href, variant = 'primary', className, children, onClick, type = 'button', style, onPointerMove, onPointerLeave },
+  ref,
+) {
   const cn = clsx(base, styles[variant], className);
-  if (href) return <Link href={href} className={cn}>{children}</Link>;
-  return <button type={type} onClick={onClick} className={cn}>{children}</button>;
-}
+  const shared = { className: cn, style, onPointerMove, onPointerLeave };
+  if (href) {
+    return (
+      <Link ref={ref} href={href} {...shared}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <button ref={ref} type={type} onClick={onClick} {...shared}>
+      {children}
+    </button>
+  );
+});
+
+export default Button;

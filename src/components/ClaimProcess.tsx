@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Reveal from './Reveal';
+import Aurora from './Aurora';
 import { steps } from '@/lib/content';
 import { clsx } from './clsx';
 
@@ -50,8 +51,14 @@ export default function ClaimProcess({ eyebrow = 'The claim, handled', title = '
   const n = steps.length;
 
   return (
-    <section className="bg-panel px-[6vw] py-28">
-      <div className="mx-auto max-w-wrap">
+    <section className="relative overflow-hidden bg-panel px-[6vw] py-28">
+      <Aurora
+        orbs={[
+          { color: 'var(--blue)', size: 620, top: '-24%', left: '6%', opacity: 0.16, motion: 'drift', duration: 26 },
+          { color: 'var(--accent)', size: 520, bottom: '-28%', right: '2%', opacity: 0.1, motion: 'drift', duration: 32 },
+        ]}
+      />
+      <div className="relative z-10 mx-auto max-w-wrap">
         <Reveal>
           <p className="eyebrow text-blue">{eyebrow}</p>
           <h2 className="mt-3.5 max-w-[620px] font-display text-[clamp(28px,4vw,42px)] font-bold text-[oklch(0.98_0.01_80)]">{title}</h2>

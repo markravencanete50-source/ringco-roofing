@@ -33,8 +33,12 @@ export default function ScrollProgress() {
   return (
     <div aria-hidden className="fixed inset-x-0 top-0 z-[60] h-[3px] bg-transparent">
       <div
-        className="h-full bg-accent transition-[width] duration-micro ease-out"
-        style={{ width: `${pct}%`, boxShadow: '0 0 10px oklch(0.62 0.155 40 / 0.6)' }}
+        className="h-full transition-[width] duration-micro ease-out"
+        style={{
+          width: `${pct}%`,
+          background: 'linear-gradient(90deg, var(--blue), var(--accent-hi))',
+          boxShadow: '0 0 10px color-mix(in oklch, var(--accent-hi) 60%, transparent)',
+        }}
       />
     </div>
   );

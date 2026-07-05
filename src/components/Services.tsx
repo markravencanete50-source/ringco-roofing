@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import Reveal from './Reveal';
+import RevealGroup from './RevealGroup';
+import Tilt from './Tilt';
 import MediaImg from './MediaImg';
 import { services, categoryColors } from '@/lib/content';
 
@@ -17,11 +19,11 @@ export default function Services() {
           <p className="max-w-[600px] text-[17px] text-muted">Four core services, one accountable crew. No subcontractor guesswork — just work we stand behind for 15 years.</p>
         </Reveal>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {services.map((s, i) => (
-            <Reveal key={s.slug} delay={i * 0.08}>
-              <div className="group relative h-full">
-                <div className="relative z-[1] flex h-full flex-col overflow-hidden rounded-[18px] border border-line bg-card shadow-[0_18px_40px_-30px_oklch(0.2_0.02_60/0.4)] transition-[transform,box-shadow] duration-comp ease-out group-hover:-translate-y-1 group-hover:shadow-[0_28px_50px_-28px_oklch(0.2_0.02_60/0.55)]">
+        <RevealGroup className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {services.map((s) => (
+            <div key={s.slug} className="h-full [perspective:1000px]">
+              <Tilt className="group relative h-full">
+                <div className="relative z-[1] flex h-full flex-col overflow-hidden rounded-[18px] border border-line bg-card shadow-[0_18px_40px_-30px_oklch(0.2_0.02_60/0.4)] transition-[box-shadow] duration-comp ease-out group-hover:shadow-[0_34px_60px_-28px_oklch(0.2_0.02_60/0.6)]">
                   <span className="h-1 w-full" style={{ background: categoryColors[s.slug] }} />
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <MediaImg src={s.image} alt={s.title} slotLabel={`${s.tag.toLowerCase()} photo`} sizes="(max-width:768px) 100vw, 25vw" className="transition-transform duration-section ease-out group-hover:scale-105" />
@@ -35,10 +37,10 @@ export default function Services() {
                     </Link>
                   </div>
                 </div>
-              </div>
-            </Reveal>
+              </Tilt>
+            </div>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );

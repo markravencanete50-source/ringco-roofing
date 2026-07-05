@@ -47,6 +47,12 @@ const config: Config = {
           '0%': { transform: 'scale(1) translate3d(0, 0, 0)' },
           '100%': { transform: 'scale(1.09) translate3d(-1.5%, -1%, 0)' },
         },
+        /* One-time "drag me" nudge for the before/after handle. */
+        baNudge: {
+          '0%, 100%': { transform: 'translate(-50%, -50%)' },
+          '50%': { transform: 'translate(calc(-50% - 6px), -50%)' },
+          '75%': { transform: 'translate(calc(-50% + 6px), -50%)' },
+        },
       },
       animation: {
         marquee: 'marquee 40s linear infinite',
@@ -55,6 +61,7 @@ const config: Config = {
         fadeUp: 'fadeUp 0.8s var(--ease-out) both',
         kenburns: 'kenburns 26s ease-in-out infinite alternate',
         'kenburns-slow': 'kenburns 40s ease-in-out infinite alternate',
+        baNudge: 'baNudge 2.4s var(--ease-out) 1.2s 3',
       },
     },
   },
