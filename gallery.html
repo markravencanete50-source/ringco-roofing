@@ -59,17 +59,161 @@
       <button class="filter-btn" data-filter="roofing">Roofing</button>
       <button class="filter-btn" data-filter="siding">Siding</button>
       <button class="filter-btn" data-filter="gutters">Gutters</button>
-      <button class="filter-btn" data-filter="storm">Storm &amp; Claims</button>
     </div>
-    <div class="gallery-grid" data-stagger>
-      <figure class="g-item" data-cat="roofing"><img src="/media/services/roofing.jpg" alt="Full GAF roof replacement, Oklahoma City" loading="lazy"><figcaption class="g-cap">Full replacement · Oklahoma City</figcaption></figure>
-      <figure class="g-item" data-cat="storm"><img src="/media/home-before.jpg" alt="Hail-damaged roof before replacement" loading="lazy"><figcaption class="g-cap">Hail damage documented · Edmond</figcaption></figure>
-      <figure class="g-item" data-cat="storm"><img src="/media/home-after.jpg" alt="Completed roof after approved insurance claim" loading="lazy"><figcaption class="g-cap">Approved claim install · Edmond</figcaption></figure>
-      <figure class="g-item" data-cat="siding"><img src="/media/services/siding.jpg" alt="Impact-resistant siding installation" loading="lazy"><figcaption class="g-cap">Impact-resistant siding · Yukon</figcaption></figure>
-      <figure class="g-item" data-cat="gutters"><img src="/media/services/gutters.jpg" alt="Seamless gutter installation" loading="lazy"><figcaption class="g-cap">Seamless gutters · Moore</figcaption></figure>
-      <figure class="g-item" data-cat="roofing"><img src="/media/cta-drone.jpg" alt="Drone view of completed roof replacement" loading="lazy"><figcaption class="g-cap">Drone final inspection · OKC</figcaption></figure>
+    <div class="g-grid" data-stagger>
+
+      <article class="g-card" data-cat="roofing">
+        <div class="g-media">
+          <span class="drone-badge">Drone — Finished Job</span>
+          <video src="/media/gallery/job-01-drone.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Drone flyover of a finished roof replacement in Edmond, OK"></video>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue)"></span>Edmond, OK</div>
+            <h3>Full replacement after April hail</h3>
+            <p class="g-scope">Tear-off · Class 4 shingles · Insurance claim</p>
+          </div>
+          <button class="g-expand" data-type="video" data-media="/media/gallery/job-01-drone.mp4" data-title="Full replacement after April hail" data-city="Edmond, OK" aria-label="Expand: Full replacement after April hail">Expand ⤢</button>
+        </div>
+      </article>
+
+      <article class="g-card" data-cat="roofing">
+        <div class="g-media">
+          <div class="ba-wrap">
+            <img src="/media/gallery/job-02-before.jpg" alt="Wind-lifted ridge before rebuild, Moore OK">
+            <img class="ba-after" src="/media/gallery/job-02-after.jpg" alt="One-day ridge rebuild after, Moore OK">
+            <div class="ba-handle"></div>
+            <span class="ba-tag before">BEFORE</span>
+            <span class="ba-tag after">AFTER</span>
+          </div>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue)"></span>Moore, OK</div>
+            <h3>Wind-lifted ridge, one-day rebuild</h3>
+            <p class="g-scope">Tear-off · GAF Timberline HDZ · Ridge vent</p>
+          </div>
+          <button class="g-expand" data-type="image" data-media="/media/gallery/job-02-after.jpg" data-title="Wind-lifted ridge, one-day rebuild" data-city="Moore, OK" aria-label="Expand: Wind-lifted ridge, one-day rebuild">Expand ⤢</button>
+        </div>
+      </article>
+
+      <article class="g-card" data-cat="siding">
+        <div class="g-media">
+          <div class="ba-wrap">
+            <img src="/media/gallery/job-03-before.jpg" alt="Hail-pocked siding before, Yukon OK">
+            <img class="ba-after" src="/media/gallery/job-03-after.jpg" alt="New fiber-cement siding after, Yukon OK">
+            <div class="ba-handle"></div>
+            <span class="ba-tag before">BEFORE</span>
+            <span class="ba-tag after">AFTER</span>
+          </div>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue-mid)"></span>Yukon, OK</div>
+            <h3>Hail-pocked siding, full elevation</h3>
+            <p class="g-scope">Fiber-cement · Trim &amp; soffit · Color match</p>
+          </div>
+          <button class="g-expand" data-type="image" data-media="/media/gallery/job-03-after.jpg" data-title="Hail-pocked siding, full elevation" data-city="Yukon, OK" aria-label="Expand: Hail-pocked siding, full elevation">Expand ⤢</button>
+        </div>
+      </article>
+
+      <article class="g-card" data-cat="roofing">
+        <div class="g-media">
+          <span class="drone-badge">Drone — Finished Job</span>
+          <video src="/media/gallery/job-04-drone.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Drone flyover of a finished roof replacement in Choctaw, OK"></video>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue)"></span>Choctaw, OK</div>
+            <h3>Denied claim, overturned &amp; replaced</h3>
+            <p class="g-scope">Re-inspection · Claim supplement · Full replacement</p>
+          </div>
+          <button class="g-expand" data-type="video" data-media="/media/gallery/job-04-drone.mp4" data-title="Denied claim, overturned &amp; replaced" data-city="Choctaw, OK" aria-label="Expand: Denied claim, overturned and replaced">Expand ⤢</button>
+        </div>
+      </article>
+
+      <article class="g-card" data-cat="gutters">
+        <div class="g-media">
+          <div class="ba-wrap">
+            <img src="/media/gallery/job-05-before.jpg" alt="Old gutters before redesign, Nichols Hills OK">
+            <img class="ba-after" src="/media/gallery/job-05-after.jpg" alt="Seamless gutters after redesign, Nichols Hills OK">
+            <div class="ba-handle"></div>
+            <span class="ba-tag before">BEFORE</span>
+            <span class="ba-tag after">AFTER</span>
+          </div>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue-soft)"></span>Nichols Hills, OK</div>
+            <h3>Seamless gutters + drainage redesign</h3>
+            <p class="g-scope">6" seamless · Leaf guards · Downspout reroute</p>
+          </div>
+          <button class="g-expand" data-type="image" data-media="/media/gallery/job-05-after.jpg" data-title="Seamless gutters + drainage redesign" data-city="Nichols Hills, OK" aria-label="Expand: Seamless gutters and drainage redesign">Expand ⤢</button>
+        </div>
+      </article>
+
+      <article class="g-card" data-cat="roofing">
+        <div class="g-media">
+          <div class="ba-wrap">
+            <img src="/media/gallery/job-06-before.jpg" alt="Steep-pitch roof before replacement, Norman OK">
+            <img class="ba-after" src="/media/gallery/job-06-after.jpg" alt="Steep-pitch roof after replacement, Norman OK">
+            <div class="ba-handle"></div>
+            <span class="ba-tag before">BEFORE</span>
+            <span class="ba-tag after">AFTER</span>
+          </div>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue)"></span>Norman, OK</div>
+            <h3>Steep-pitch replacement, two crews</h3>
+            <p class="g-scope">Tear-off · Synthetic underlayment · Ice &amp; water</p>
+          </div>
+          <button class="g-expand" data-type="image" data-media="/media/gallery/job-06-after.jpg" data-title="Steep-pitch replacement, two crews" data-city="Norman, OK" aria-label="Expand: Steep-pitch replacement, two crews">Expand ⤢</button>
+        </div>
+      </article>
+
+      <article class="g-card" data-cat="siding">
+        <div class="g-media">
+          <div class="ba-wrap">
+            <img src="/media/gallery/job-07-before.jpg" alt="Storm-damaged vinyl siding before, Midwest City OK">
+            <img class="ba-after" src="/media/gallery/job-07-after.jpg" alt="Refreshed vinyl siding after, Midwest City OK">
+            <div class="ba-handle"></div>
+            <span class="ba-tag before">BEFORE</span>
+            <span class="ba-tag after">AFTER</span>
+          </div>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue-mid)"></span>Midwest City, OK</div>
+            <h3>Storm-damaged vinyl, whole-home refresh</h3>
+            <p class="g-scope">Vinyl siding · Fascia wrap · Insurance claim</p>
+          </div>
+          <button class="g-expand" data-type="image" data-media="/media/gallery/job-07-after.jpg" data-title="Storm-damaged vinyl, whole-home refresh" data-city="Midwest City, OK" aria-label="Expand: Storm-damaged vinyl, whole-home refresh">Expand ⤢</button>
+        </div>
+      </article>
+
+      <article class="g-card" data-cat="gutters">
+        <div class="g-media">
+          <div class="ba-wrap">
+            <img src="/media/gallery/job-08-before.jpg" alt="Foundation pooling before gutter fix, Bethany OK">
+            <img class="ba-after" src="/media/gallery/job-08-after.jpg" alt="Corrected drainage after gutter fix, Bethany OK">
+            <div class="ba-handle"></div>
+            <span class="ba-tag before">BEFORE</span>
+            <span class="ba-tag after">AFTER</span>
+          </div>
+        </div>
+        <div class="g-body">
+          <div>
+            <div class="g-city"><span class="g-dot" style="background:var(--blue-soft)"></span>Bethany, OK</div>
+            <h3>Foundation pooling fixed for good</h3>
+            <p class="g-scope">Re-pitch · Oversized downspouts · Splash control</p>
+          </div>
+          <button class="g-expand" data-type="image" data-media="/media/gallery/job-08-after.jpg" data-title="Foundation pooling fixed for good" data-city="Bethany, OK" aria-label="Expand: Foundation pooling fixed for good">Expand ⤢</button>
+        </div>
+      </article>
+
     </div>
-    <p style="margin-top:32px;font-size:14px;color:var(--faint);text-align:center">More project photos coming — every Ringco roof is drone-documented at completion.</p>
+    <p style="margin-top:36px;font-size:14px;color:var(--faint);text-align:center">Drag any before/after to compare — every Ringco roof is drone-documented at completion.</p>
   </div>
 </section>
 
@@ -121,6 +265,14 @@
     </div>
   </div>
 </footer>
+
+<div class="lightbox" aria-hidden="true" role="dialog" aria-label="Project media">
+  <button class="lightbox-close" aria-label="Close">✕</button>
+  <figure>
+    <div class="lightbox-media"></div>
+    <figcaption class="lightbox-cap"></figcaption>
+  </figure>
+</div>
 
 <script src="/js/main.js"></script>
 </body>

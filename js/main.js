@@ -206,11 +206,43 @@
         filterBtns.forEach(function (b) { b.classList.remove("active"); });
         btn.classList.add("active");
         var f = btn.getAttribute("data-filter");
-        document.querySelectorAll(".g-item").forEach(function (item) {
+        document.querySelectorAll(".g-item, .g-card").forEach(function (item) {
           var show = f === "all" || item.getAttribute("data-cat") === f;
           item.classList.toggle("hide", !show);
         });
       });
+    });
+  }
+
+  /* ---------- Gallery lightbox ---------- */
+  var lb = document.querySelector(".lightbox");
+  if (lb) {
+    var lbMedia = lb.querySelector(".lightbox-media");
+    var lbCap = lb.querySelector(".lightbox-cap");
+    var closeLb = function () {
+      lb.classList.remove("open");
+      document.body.classList.remove("nav-open");
+      lbMedia.innerHTML = "";
+    };
+    var openLb = function (btn) {
+      var type = btn.getAttribute("data-type");
+      var src = btn.getAttribute("data-media");
+      var title = btn.getAttribute("data-title") || "";
+      var city = btn.getAttribute("data-city") || "";
+      lbMedia.innerHTML = type === "video"
+        ? '<video src="' + src + '" autoplay muted loop playsinline controls></video>'
+        : '<img src="' + src + '" alt="' + title + '">';
+      lbCap.innerHTML = title + (city ? "<span>" + city + "</span>" : "");
+      lb.classList.add("open");
+      document.body.classList.add("nav-open");
+    };
+    document.querySelectorAll(".g-expand").forEach(function (b) {
+      b.addEventListener("click", function () { openLb(b); });
+    });
+    lb.querySelector(".lightbox-close").addEventListener("click", closeLb);
+    lb.addEventListener("click", function (e) { if (e.target === lb) closeLb(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && lb.classList.contains("open")) closeLb();
     });
   }
 
