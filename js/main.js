@@ -288,4 +288,72 @@
       el.addEventListener("mouseleave", function () { el.style.transform = ""; });
     });
   }
+
+  /* ============================================================
+     Storm detector — live NWS/NOAA severe-weather alerts
+     Shows a dismissible navbar banner when roofing-relevant severe
+     weather is active in the OKC-metro service area. No key, no
+     backend — api.weather.gov is public + CORS-enabled.
+     Preview any state without a live storm: /?stormdemo=Tornado%20Warning
+     ============================================================ */
+  (function stormDetector() {
+    // Roof-damaging event types we care about
+    var RELEVANT = /(Tornado|Severe Thunderstorm|High Wind|Wind Advisory|Hail|Flash Flood)/i;
+    // Ringco service area — Oklahoma County + surrounding metro counties
+    var METRO = /\b(Oklahoma|Cleveland|Canadian|Pottawatomie|McClain|Logan|Grady|Lincoln|Kingfisher)\b/i;
+    var SEV = { extreme: 4, severe: 3, moderate: 2, minor: 1, unknown: 0 };
+
+    function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML; }
+    function rank(f) { return SEV[(f.properties.severity || "").toLowerCase()] || 0; }
+
+    function render(f) {
+      var p = f.properties;
+      var id = f.id || p.event;
+      var dismissed;
+      try { dismissed = sessionStorage.getItem("ringco-storm-dismissed"); } catch (_) {}
+      if (dismissed && dismissed === id) return;
+
+      var isWarning = /Warning/i.test(p.event);
+      var bar = document.createElement("div");
+      bar.className = "storm-alert " + (isWarning ? "warning" : "watch");
+      bar.setAttribute("role", "alert");
+      bar.innerHTML =
+        '<span class="sa-dot" aria-hidden="true"></span>' +
+        '<span><b>' + esc(p.event) + '</b> active for the OKC metro.' +
+        '<span class="sa-msg-extra"> Storm or roof damage? We\'re on call 24/7.</span></span>' +
+        '<a class="sa-cta" href="/contact">' + (isWarning ? "Get a free inspection →" : "Storm-damage help →") + "</a>" +
+        '<button class="sa-close" type="button" aria-label="Dismiss weather alert">✕</button>';
+      document.body.appendChild(bar);
+      document.body.classList.add("storm-on");
+      requestAnimationFrame(function () { bar.classList.add("show"); });
+      bar.querySelector(".sa-close").addEventListener("click", function () {
+        bar.classList.remove("show");
+        document.body.classList.remove("storm-on");
+        setTimeout(function () { bar.remove(); }, 400);
+        try { sessionStorage.setItem("ringco-storm-dismissed", id); } catch (_) {}
+      });
+    }
+
+    // Preview hook — force a demo alert for design review
+    var demo = new URLSearchParams(location.search).get("stormdemo");
+    if (demo) {
+      render({ id: "demo", properties: { event: demo, severity: "Severe", areaDesc: "Oklahoma, OK" } });
+      return;
+    }
+
+    if (!("fetch" in window)) return;
+    fetch("https://api.weather.gov/alerts/active?area=OK", { headers: { Accept: "application/geo+json" } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        if (!j || !j.features) return;
+        var hits = j.features.filter(function (f) {
+          var p = f.properties;
+          return RELEVANT.test(p.event) && METRO.test(p.areaDesc || "");
+        });
+        if (!hits.length) return;
+        hits.sort(function (a, b) { return rank(b) - rank(a); });
+        render(hits[0]);
+      })
+      .catch(function () { /* silent — never surface a fetch error to visitors */ });
+  })();
 })();

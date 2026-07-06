@@ -317,6 +317,26 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7.5px) rotate(
 /* Scroll progress bar — brand gradient, tracks page scroll */
 .scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;background:var(--grad);z-index:200;pointer-events:none;will-change:transform;box-shadow:0 0 12px rgba(0,92,151,.55)}
 
+/* Storm alert bar — live NWS severe-weather notifications (JS-injected) */
+.storm-alert{position:fixed;top:0;left:0;right:0;z-index:250;display:none;align-items:center;justify-content:center;gap:14px;padding:10px 50px 10px 20px;font:600 13.5px var(--font-body);color:#fff;text-align:center;box-shadow:0 6px 20px rgba(0,11,23,.25);transform:translateY(-100%);transition:transform .4s var(--ease)}
+.storm-alert.warning{background:linear-gradient(100deg,#7d1414,#c0392b)}
+.storm-alert.watch{background:linear-gradient(100deg,#8a5a0c,#d98614)}
+.storm-alert.show{display:flex;transform:none}
+.storm-alert .sa-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#fff;animation:saPulse 1.6s ease-out infinite}
+@keyframes saPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.65)}70%{box-shadow:0 0 0 7px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+.storm-alert b{font-family:var(--font-head);font-weight:800}
+.storm-alert .sa-cta{flex:none;color:#fff;font-family:var(--font-head);font-weight:800;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.storm-alert .sa-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:27px;height:27px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:14px;line-height:1;cursor:pointer;transition:background .2s}
+.storm-alert .sa-close:hover{background:rgba(255,255,255,.34)}
+body.storm-on .site-header{top:56px}
+body.storm-on .scroll-progress{top:44px}
+@media (max-width:640px){
+  .storm-alert{gap:10px;padding:9px 44px 9px 14px;font-size:12.5px}
+  .storm-alert .sa-msg-extra{display:none}
+  body.storm-on .site-header{top:78px}
+  body.storm-on .scroll-progress{top:64px}
+}
+
 /* Aurora ambient glow for dark sections (drifting brand light) */
 .aurora{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
 .aurora::before,.aurora::after{content:"";position:absolute;width:58vmax;height:58vmax;border-radius:50%;filter:blur(70px);opacity:.5;mix-blend-mode:screen}
@@ -340,6 +360,7 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7.5px) rotate(
   .scroll-cue::after{animation:none}
   .marquee-track{animation:none}
   .scroll-progress{display:none}
+  .sa-dot,.drone-badge::before{animation:none}
 }
 
 /* ---------- Responsive ---------- */
