@@ -14,14 +14,14 @@
    with role == "admin" and status == "active".
    ------------------------------------------------------------------ */
 
-const FIREBASE_CONFIG = {
-  // apiKey: "...",
-  // authDomain: "ringco-roofing.firebaseapp.com",
-  // projectId: "ringco-roofing",
-  // storageBucket: "...",
-  // messagingSenderId: "...",
-  // appId: "..."
-};
+// FIREBASE_CONFIG is generated at deploy time by build-config.js from the
+// project's NEXT_PUBLIC_FIREBASE_* Vercel env vars. Locally (no build) the
+// import fails and the page shows the setup guide.
+let FIREBASE_CONFIG = {};
+try {
+  const mod = await import("/js/firebase-config.js");
+  FIREBASE_CONFIG = (mod && mod.FIREBASE_CONFIG) || {};
+} catch (_) { /* not generated yet */ }
 
 const LOOKER_EMBED_URL = ""; // paste your Looker Studio embed URL
 

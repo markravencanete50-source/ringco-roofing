@@ -50,8 +50,9 @@
       <p class="admin-setup-lead">The dashboard shell is ready. A few steps connect sign-in and live data:</p>
       <ol class="admin-steps">
         <li>
-          <b>Connect Firebase.</b> In the Firebase console → Project settings → Your apps → Web app,
-          copy the config object and paste it into <code>FIREBASE_CONFIG</code> in <code>/js/admin.js</code>.
+          <b>Connect Firebase.</b> The web config is read automatically at deploy from your Vercel
+          <code>NEXT_PUBLIC_FIREBASE_*</code> environment variables — nothing to paste. If sign-in
+          isn't working, confirm those six vars exist in Vercel → Settings → Environment Variables.
         </li>
         <li>
           <b>Turn on email/password login.</b> Firebase → Authentication → Sign-in method → enable

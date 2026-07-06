@@ -22,3 +22,6 @@ next-env.d.ts
 
 # local dev preview server
 .claude/serve.cjs
+
+# generated at Vercel build from NEXT_PUBLIC_FIREBASE_* env vars
+js/firebase-config.js
