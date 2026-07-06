@@ -29,6 +29,8 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
+/* the [hidden] attribute must win over component display rules (e.g. admin panels) */
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--cloud);-webkit-font-smoothing:antialiased}
 img,video{max-width:100%;display:block}
