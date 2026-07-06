@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — Analytics | Ringco Roofing</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#092849">
+<link rel="icon" type="image/png" href="/assets/ringco-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="admin-body">
+
+<header class="admin-top">
+  <a class="logo" href="/"><img src="/assets/ringco-logo-landscape.png" alt="Ringco Roofing and Construction"></a>
+  <div class="admin-top-right">
+    <span class="admin-title">Analytics Dashboard</span>
+    <button id="admin-signout" class="btn btn-ghost-dark" type="button" hidden>Sign out</button>
+  </div>
+</header>
+
+<main class="admin-main">
+
+  <!-- Access gate -->
+  <section id="admin-gate" class="admin-gate">
+    <div class="gate-card">
+      <span class="v-ico" aria-hidden="true">🔒</span>
+      <h1>Admin access</h1>
+      <p>Enter the access code to view the analytics dashboard.</p>
+      <form id="gate-form" autocomplete="off">
+        <label for="gate-code" class="sr-only">Access code</label>
+        <input id="gate-code" type="password" placeholder="Access code" autocomplete="current-password" autofocus>
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center">Unlock <span class="arr">→</span></button>
+        <p id="gate-err" class="gate-err" role="alert"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="admin-dash" class="admin-dash" hidden>
+
+    <!-- Shown until the Looker embed URL is set -->
+    <div id="admin-setup" class="admin-setup">
+      <h2>Finish setup</h2>
+      <p class="admin-setup-lead">The dashboard shell is ready. Two quick steps connect it to live Google data:</p>
+      <ol class="admin-steps">
+        <li>
+          <b>Turn on website tracking.</b> Create a free Google Analytics 4 property for
+          <code>ringcoroofing.com</code>, copy its Measurement ID (<code>G-XXXXXXXXXX</code>),
+          and paste it into <code>/js/analytics.js</code>. Visits start recording immediately.
+        </li>
+        <li>
+          <b>Build the dashboard.</b> In <a href="https://lookerstudio.google.com" target="_blank" rel="noopener">Looker Studio</a>,
+          create a report on that GA4 property (or start from the “GA4” template). Then
+          <b>Share → Embed report</b>, copy the URL from the embed code, and paste it into
+          <code>LOOKER_EMBED_URL</code> at the top of <code>/js/admin.js</code>.
+        </li>
+      </ol>
+      <p class="admin-setup-note">Keep the Looker report shared only to your Google account(s) so the data stays private. Send me those two values and I’ll drop them in for you.</p>
+    </div>
+
+    <!-- Live dashboard -->
+    <iframe id="looker-frame" title="Ringco analytics (Looker Studio)" hidden
+      frameborder="0" style="border:0" allowfullscreen
+      sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+
+  </section>
+
+</main>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>
