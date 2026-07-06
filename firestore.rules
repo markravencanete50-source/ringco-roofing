@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Admin users. A signed-in person may read ONLY their own record
+    // (the /admin dashboard uses this to confirm role == "admin").
+    // Create/edit users in the Firebase console, never from the client.
+    match /users/{userId} {
+      allow read: if request.auth != null
+                  && resource.data.email == request.auth.token.email;
+      allow write: if false;
+    }
+
+    // Everything else stays fully locked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

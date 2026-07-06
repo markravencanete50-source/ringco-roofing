@@ -1,85 +1,126 @@
-/* Ringco admin dashboard — gate + Looker Studio embed.
+/* Ringco admin dashboard — Firebase email/password auth + Looker Studio embed.
    ------------------------------------------------------------------
-   CONFIG — set these two values to go live:
-   1) LOOKER_EMBED_URL — in Looker Studio: Share → Embed report → copy the
-      URL from the iframe "src". Leave "" to show setup instructions.
-   2) ACCESS_CODE_SHA256 — SHA-256 hash of the access code. Default code is
-      "ringco-admin". To change it, hash your new code and paste it here.
-   NOTE: this client-side gate is light protection (keeps casual visitors out
-   + the page is noindex/unlinked). The REAL data protection is your Looker
-   report's Google sharing — keep it shared only to your Google account(s).
+   SETUP (all values below are public identifiers, safe to commit):
+   1) FIREBASE_CONFIG — Firebase console → Project settings → Your apps →
+      Web app → "SDK setup and configuration" → Config. Paste the object.
+   2) In Firebase console → Authentication → Sign-in method: enable
+      Email/Password. Then Authentication → Users → Add user with your
+      admin email + a password (this is the login).
+   3) Firestore → Rules: publish the rules from /firestore.rules so a
+      signed-in admin can read their own /users record.
+   4) LOOKER_EMBED_URL — Looker Studio → Share → Embed report → copy the
+      iframe src. Leave "" to keep showing the setup guide.
+   Access is granted only when the signed-in account also has a /users doc
+   with role == "admin" and status == "active".
    ------------------------------------------------------------------ */
-(function () {
-  "use strict";
 
-  var LOOKER_EMBED_URL = ""; // <-- paste your Looker Studio embed URL
-  var ACCESS_CODE_SHA256 = "dff6d0940d621f14d1f8a2c14a52bbf54a35af5e56ed660036e78271d3bda122"; // "ringco-admin"
+const FIREBASE_CONFIG = {
+  // apiKey: "...",
+  // authDomain: "ringco-roofing.firebaseapp.com",
+  // projectId: "ringco-roofing",
+  // storageBucket: "...",
+  // messagingSenderId: "...",
+  // appId: "..."
+};
 
-  var gate = document.getElementById("admin-gate");
-  var dash = document.getElementById("admin-dash");
-  var setup = document.getElementById("admin-setup");
-  var frame = document.getElementById("looker-frame");
-  var form = document.getElementById("gate-form");
-  var input = document.getElementById("gate-code");
-  var err = document.getElementById("gate-err");
-  var signout = document.getElementById("admin-signout");
+const LOOKER_EMBED_URL = ""; // paste your Looker Studio embed URL
 
-  function showDashboard() {
-    gate.hidden = true;
-    dash.hidden = false;
-    signout.hidden = false;
-    if (LOOKER_EMBED_URL) {
-      frame.src = LOOKER_EMBED_URL;
-      frame.hidden = false;
-      setup.hidden = true;
-    } else {
-      frame.hidden = true;
-      setup.hidden = false;
+const SDK = "https://www.gstatic.com/firebasejs/10.12.0";
+
+const el = function (id) { return document.getElementById(id); };
+const gate = el("admin-gate"), dash = el("admin-dash"), setup = el("admin-setup"),
+  frame = el("looker-frame"), form = el("gate-form"),
+  emailInput = el("gate-email"), passInput = el("gate-pass"),
+  err = el("gate-err"), signout = el("admin-signout");
+
+function showDashboard() {
+  gate.hidden = true; dash.hidden = false; signout.hidden = false;
+  if (LOOKER_EMBED_URL) { frame.src = LOOKER_EMBED_URL; frame.hidden = false; setup.hidden = true; }
+  else { frame.hidden = true; setup.hidden = false; }
+}
+function showGate() {
+  dash.hidden = true; signout.hidden = true; gate.hidden = false;
+  if (frame) frame.src = "";
+}
+function showSetupOnly() {
+  // Firebase not configured yet — reveal the setup guide, no auth.
+  gate.hidden = true; dash.hidden = false; signout.hidden = true;
+  frame.hidden = true; setup.hidden = false;
+}
+
+function friendly(code) {
+  switch (code) {
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found": return "Wrong email or password.";
+    case "auth/invalid-email": return "Enter a valid email address.";
+    case "auth/too-many-requests": return "Too many attempts — try again in a few minutes.";
+    case "auth/network-request-failed": return "Network error — check your connection.";
+    default: return "Sign-in failed. Please try again.";
+  }
+}
+
+const configured = FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey;
+
+if (!configured) {
+  showSetupOnly();
+} else {
+  (async function () {
+    const [{ initializeApp }, authMod, fsMod] = await Promise.all([
+      import(SDK + "/firebase-app.js"),
+      import(SDK + "/firebase-auth.js"),
+      import(SDK + "/firebase-firestore.js"),
+    ]);
+    const { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } = authMod;
+    const { getFirestore, collection, query, where, getDocs } = fsMod;
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // throws on Firestore errors (e.g. rules) so the caller can explain
+    async function isActiveAdmin(user) {
+      const q = query(collection(db, "users"), where("email", "==", user.email));
+      const snap = await getDocs(q);
+      let ok = false;
+      snap.forEach(function (d) {
+        const u = d.data();
+        if (u.role === "admin" && (u.status === "active" || u.status === undefined)) ok = true;
+      });
+      return ok;
     }
-  }
 
-  function lock() {
-    try { sessionStorage.removeItem("ringco-admin-ok"); } catch (_) {}
-    dash.hidden = true;
-    signout.hidden = true;
-    gate.hidden = false;
-    if (frame) frame.src = "";
-    if (input) { input.value = ""; input.focus(); }
-  }
+    onAuthStateChanged(auth, async function (user) {
+      if (!user) { showGate(); return; }
+      try {
+        if (await isActiveAdmin(user)) { showDashboard(); }
+        else { err.textContent = "This account isn't an authorized admin."; await signOut(auth); showGate(); }
+      } catch (e) {
+        err.textContent = "Couldn't verify admin access — check the Firestore rules.";
+        await signOut(auth); showGate();
+      }
+    });
 
-  async function sha256hex(str) {
-    var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(function (b) {
-      return b.toString(16).padStart(2, "0");
-    }).join("");
-  }
-
-  // Already unlocked this session?
-  var unlocked = false;
-  try { unlocked = sessionStorage.getItem("ringco-admin-ok") === "1"; } catch (_) {}
-  if (unlocked) showDashboard();
-
-  if (form) {
-    form.addEventListener("submit", function (e) {
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
       err.textContent = "";
-      var val = input.value.trim();
-      if (!val) return;
-      if (!window.crypto || !crypto.subtle) {
-        err.textContent = "Secure context required — open this page over https.";
-        return;
+      const email = emailInput.value.trim(), pass = passInput.value;
+      if (!email || !pass) return;
+      const btn = form.querySelector("button[type=submit]");
+      btn.disabled = true;
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        // onAuthStateChanged completes the flow (role check → dashboard)
+      } catch (e2) {
+        err.textContent = friendly(e2 && e2.code);
+      } finally {
+        btn.disabled = false;
       }
-      sha256hex(val).then(function (hash) {
-        if (hash === ACCESS_CODE_SHA256) {
-          try { sessionStorage.setItem("ringco-admin-ok", "1"); } catch (_) {}
-          showDashboard();
-        } else {
-          err.textContent = "Incorrect code.";
-          input.select();
-        }
-      });
     });
-  }
 
-  if (signout) signout.addEventListener("click", lock);
-})();
+    signout.addEventListener("click", function () { signOut(auth); });
+  })().catch(function () {
+    err.textContent = "Couldn't load sign-in. Check your Firebase config.";
+    showGate();
+  });
+}

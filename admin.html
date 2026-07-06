@@ -28,12 +28,14 @@
   <section id="admin-gate" class="admin-gate">
     <div class="gate-card">
       <span class="v-ico" aria-hidden="true">🔒</span>
-      <h1>Admin access</h1>
-      <p>Enter the access code to view the analytics dashboard.</p>
-      <form id="gate-form" autocomplete="off">
-        <label for="gate-code" class="sr-only">Access code</label>
-        <input id="gate-code" type="password" placeholder="Access code" autocomplete="current-password" autofocus>
-        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center">Unlock <span class="arr">→</span></button>
+      <h1>Admin sign in</h1>
+      <p>Sign in with your admin email &amp; password to view the analytics dashboard.</p>
+      <form id="gate-form" autocomplete="on">
+        <label for="gate-email" class="sr-only">Email</label>
+        <input id="gate-email" type="email" placeholder="Email" autocomplete="username" autofocus>
+        <label for="gate-pass" class="sr-only">Password</label>
+        <input id="gate-pass" type="password" placeholder="Password" autocomplete="current-password">
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center">Sign in <span class="arr">→</span></button>
         <p id="gate-err" class="gate-err" role="alert"></p>
       </form>
     </div>
@@ -45,21 +47,29 @@
     <!-- Shown until the Looker embed URL is set -->
     <div id="admin-setup" class="admin-setup">
       <h2>Finish setup</h2>
-      <p class="admin-setup-lead">The dashboard shell is ready. Two quick steps connect it to live Google data:</p>
+      <p class="admin-setup-lead">The dashboard shell is ready. A few steps connect sign-in and live data:</p>
       <ol class="admin-steps">
         <li>
-          <b>Turn on website tracking.</b> Create a free Google Analytics 4 property for
-          <code>ringcoroofing.com</code>, copy its Measurement ID (<code>G-XXXXXXXXXX</code>),
-          and paste it into <code>/js/analytics.js</code>. Visits start recording immediately.
+          <b>Connect Firebase.</b> In the Firebase console → Project settings → Your apps → Web app,
+          copy the config object and paste it into <code>FIREBASE_CONFIG</code> in <code>/js/admin.js</code>.
+        </li>
+        <li>
+          <b>Turn on email/password login.</b> Firebase → Authentication → Sign-in method → enable
+          <b>Email/Password</b>. Then Authentication → Users → <b>Add user</b> with your admin email and a password.
+          Make sure a <code>/users</code> doc exists with that same email, <code>role: "admin"</code>, <code>status: "active"</code>,
+          and publish the rules from <code>/firestore.rules</code>.
+        </li>
+        <li>
+          <b>Turn on website tracking.</b> Create a free Google Analytics 4 property, copy its
+          Measurement ID (<code>G-XXXXXXXXXX</code>), and paste it into <code>/js/analytics.js</code>.
         </li>
         <li>
           <b>Build the dashboard.</b> In <a href="https://lookerstudio.google.com" target="_blank" rel="noopener">Looker Studio</a>,
-          create a report on that GA4 property (or start from the “GA4” template). Then
-          <b>Share → Embed report</b>, copy the URL from the embed code, and paste it into
-          <code>LOOKER_EMBED_URL</code> at the top of <code>/js/admin.js</code>.
+          create a report on that GA4 property, then <b>Share → Embed report</b> and paste the URL into
+          <code>LOOKER_EMBED_URL</code> in <code>/js/admin.js</code>.
         </li>
       </ol>
-      <p class="admin-setup-note">Keep the Looker report shared only to your Google account(s) so the data stays private. Send me those two values and I’ll drop them in for you.</p>
+      <p class="admin-setup-note">Keep the Looker report shared only to your Google account(s) so the data stays private. Send me the Firebase config, GA4 ID, and Looker URL and I’ll drop them in for you.</p>
     </div>
 
     <!-- Live dashboard -->
@@ -71,6 +81,6 @@
 
 </main>
 
-<script src="/js/admin.js"></script>
+<script type="module" src="/js/admin.js"></script>
 </body>
 </html>
