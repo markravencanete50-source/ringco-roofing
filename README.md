@@ -1,52 +1,57 @@
-# Ringco Roofing & Construction — Website
+# Ringco Roofing and Construction — Website
 
-Next.js 14 (App Router) + Tailwind CSS + TypeScript. Full 6-page marketing site:
-`/` (home), `/services` (hub), `/insurance-claims`, `/gallery`, `/about`, `/contact`,
-plus `/api/lead` (form intake stub).
+Marketing site for **Ringco Roofing and Construction** (Oklahoma City / Oklahoma County, OK).
+Design direction **1b "Gradient Bento"** — glass nav over a full-bleed video hero, a bento
+service grid, brand-gradient accents, and scroll-driven motion throughout.
 
-## Quick start
+This is a **static site** (plain HTML / CSS / JS, no build step). It deploys directly on Vercel.
 
-```bash
-npm install
-npm run dev        # http://localhost:3000
-npm run build      # production build — run before every push
-```
-
-## Add your real media (do this first)
-
-Drop photos/drone videos into `public/media/` using the exact filenames listed
-in **[MEDIA.md](./MEDIA.md)**. Missing files render as labeled striped
-placeholders, so the site never looks broken — but the hero drone loop, gallery
-before/afters, and team photos are the highest-impact content on the site.
+## Pages
+| URL | File | Purpose |
+|-----|------|---------|
+| `/` | `index.html` | Home — hero, stats, services bento, claims band, before/after, CTA |
+| `/services` | `services.html` | Roofing · Siding · Gutters · Storm (anchors `#roofing #siding #gutters #storm`) |
+| `/insurance-claims` | `insurance-claims.html` | Claims process, bento steps, FAQ |
+| `/gallery` | `gallery.html` | Filterable project gallery |
+| `/about` | `about.html` | Story, values, count-up stats |
+| `/contact` | `contact.html` | Estimate form + contact card |
 
 ## Structure
+```
+index.html + 5 pages   Page markup
+css/style.css          Full design system (brand tokens, components, motion, responsive)
+js/main.js             All interactions + the motion-enhancement layer
+assets/                Brand logos (transparent PNGs — never retype the wordmark)
+media/                 Photos & video (real Ringco footage — do not swap without sign-off)
+vercel.json            cleanUrls, long-cache for /media, security headers
+robots.txt / sitemap.xml
+```
 
-- `src/app/` — routes (one folder per page) + `api/lead/route.ts`
-- `src/components/` — sections + shared primitives:
-  - Motion system: `Reveal` (scroll fade-up), `ClaimProcess` (scroll-driven
-    line-draw stepper, shared by Home & Insurance Claims), `BASlider`
-    (before/after drag slider, shared by Home & Gallery), `Parallax`,
-    `Accordion`, `ClaimStory` (animated denied→approved stepper)
-  - `MediaImg` — local-media image with striped-placeholder fallback
-  - `AreaMap` — styled service-area map with city pins (About + Contact)
-- `src/lib/content.ts` — **ALL copy and data**: nav, services, steps, stats,
-  reviews, certs, cities, team, gallery items, OK insurance facts, claim story,
-  FAQs. Edit content here, not in components.
-- `src/app/globals.css` + `tailwind.config.ts` — design tokens: oklch color
-  vars, weathered orange-red accent (CTAs only), motion tokens
-  (`--ease-out`, 200/400/800 ms), global reduced-motion kill-switch.
+## Brand (from the RINGCO Brand Bible)
+- **Colors** — deep blue `#024778`, mid `#005C97`, navy `#092849`, `#0E3C5E`, deepest `#000B17`;
+  brand gradient `linear-gradient(100deg,#024778,#005C97)`. Shadows are always navy-tinted, never gray/black.
+- **Type** — headlines **Plus Jakarta Sans** (free stand-in for the commercial *Neue Plak*);
+  body **Mulish** (an actual brand font). If Neue Plak is licensed, swap `--font-head` in `css/style.css`.
+- **Logo** — `assets/ringco-logo-landscape.png` (light backgrounds), `assets/ringco-logo.png` (square/favicon).
 
-## Deploying
+## Motion & UX
+IntersectionObserver reveals & staggers, hero headline word-rise, count-up stats, infinite trust
+marquee, sticky glass header, full-screen mobile nav, FAQ accordion, gallery filters, and an
+enhancement layer: **scroll-progress bar, drifting aurora glow on dark sections, magnetic primary
+CTAs, subtle 3D card tilt, a cinematic hero grade, and a keyboard-accessible before/after slider.**
+Every ambient/pointer effect is gated behind `prefers-reduced-motion` **and** `(pointer:fine)`.
 
-1. `npm run build` locally — must pass.
-2. Commit and push to `main` (production deploy).
-3. Set `NEXT_PUBLIC_SITE_URL` in the host env (see `.env.example`).
+## Local preview
+No dependencies. From the repo root:
+```
+node .claude/serve.cjs      # → http://localhost:3000 (mirrors Vercel clean URLs)
+```
 
-## TODO before launch
+## Production TODO
+- **Contact form** (`#estimate-form`) is a front-end stub — wire it to an email service / CRM
+  webhook before launch. Keep this repo public? Then keep any keys server-side, never committed.
+- Confirm client-verification content: team names/roles, area-city list, GAF/BBB/warranty claims.
 
-- [ ] Drop real media into `public/media/` per MEDIA.md (esp. team photos — biggest credibility gap)
-- [ ] Update `galleryItems` in `content.ts` to match the real jobs (titles, cities, which have drone clips)
-- [ ] Wire `src/app/api/lead/route.ts` to email (Resend) or CRM webhook
-- [ ] Real logo asset in Header/Footer
-- [ ] Verify license/cert claims (GAF, BBB) and review quotes with the client
-- [ ] Confirm drafted copy: team names/roles/bios, 15-city list, claim story details
+## History
+The previous Firebase and Next.js builds remain recoverable in git history (pre-redesign HEAD
+`f95990d`; earlier Firebase build at `40598e1`).

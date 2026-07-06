@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "ringco-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": [".claude/serve.cjs"],
       "port": 3000
     }
   ]
