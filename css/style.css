@@ -219,6 +219,8 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7.5px) rotate(
 .footer-col a{display:block;font-size:14.5px;color:rgba(255,255,255,.75);padding:5px 0}
 .footer-col a:hover{color:#fff}
 .footer-base{margin-top:48px;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.5)}
+.footer-admin{color:rgba(255,255,255,.5);text-decoration:underline;text-underline-offset:2px}
+.footer-admin:hover{color:var(--sky)}
 .wordmark{font:800 24px var(--font-head);letter-spacing:-.01em;color:#fff}
 .wordmark em{font-style:normal;font-weight:400;color:var(--sky)}
 
