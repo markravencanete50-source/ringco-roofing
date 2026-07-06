@@ -17,7 +17,7 @@
 <header class="admin-top">
   <a class="logo" href="/"><img src="/assets/ringco-logo-landscape.png" alt="Ringco Roofing and Construction"></a>
   <div class="admin-top-right">
-    <span class="admin-title">Analytics Dashboard</span>
+    <span class="admin-title">Admin Dashboard</span>
     <button id="admin-signout" class="btn btn-ghost-dark" type="button" hidden>Sign out</button>
   </div>
 </header>
@@ -44,39 +44,98 @@
   <!-- Dashboard -->
   <section id="admin-dash" class="admin-dash" hidden>
 
-    <!-- Shown until the Looker embed URL is set -->
-    <div id="admin-setup" class="admin-setup">
+    <!-- LIVE dashboard — leads from the website contact form (Firestore) -->
+    <div id="admin-live" class="admin-live" hidden>
+      <div class="dash-wrap">
+
+        <div class="dash-head">
+          <div>
+            <h1 class="dash-h1">Leads &amp; enquiries</h1>
+            <p class="dash-sub">Every request from your website, updating live.</p>
+          </div>
+          <span id="dash-live-dot" class="live-dot" title="Connected — updates in real time">Live</span>
+        </div>
+
+        <!-- KPI cards -->
+        <div class="stat-row">
+          <div class="stat-card">
+            <span class="stat-ico">📥</span>
+            <div class="stat-num" id="kpi-total">—</div>
+            <div class="stat-label">Total leads</div>
+          </div>
+          <div class="stat-card accent">
+            <span class="stat-ico">🔔</span>
+            <div class="stat-num" id="kpi-new">—</div>
+            <div class="stat-label">New / unactioned</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-ico">📅</span>
+            <div class="stat-num" id="kpi-week">—</div>
+            <div class="stat-label">Last 7 days</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-ico">⭐</span>
+            <div class="stat-num" id="kpi-service">—</div>
+            <div class="stat-label">Top request</div>
+          </div>
+        </div>
+
+        <!-- Leads panel -->
+        <div class="lead-panel">
+          <div class="lead-toolbar">
+            <div class="seg" id="lead-filter" role="tablist" aria-label="Filter leads by status">
+              <button type="button" data-f="all" class="on">All</button>
+              <button type="button" data-f="new">New</button>
+              <button type="button" data-f="contacted">Contacted</button>
+              <button type="button" data-f="closed">Closed</button>
+            </div>
+            <div class="lead-search">
+              <span aria-hidden="true">🔍</span>
+              <input id="lead-search" type="search" placeholder="Search name, phone, email…" autocomplete="off">
+            </div>
+          </div>
+
+          <div id="lead-list" class="lead-list" aria-live="polite"></div>
+
+          <div id="lead-loading" class="lead-state">Loading leads…</div>
+          <div id="lead-empty" class="lead-state" hidden>
+            <span class="lead-state-ico">🗂️</span>
+            <b>No leads yet.</b>
+            <p>Requests from your website contact form will appear here automatically — no refresh needed.</p>
+          </div>
+          <div id="lead-none" class="lead-state" hidden>No leads match this filter.</div>
+        </div>
+
+        <!-- Optional website-traffic analytics (only if a Looker URL is set) -->
+        <details id="ga-panel" class="ga-panel" hidden>
+          <summary>Website traffic analytics (Google&nbsp;Analytics)</summary>
+          <iframe id="looker-frame" title="Ringco analytics (Looker Studio)"
+            frameborder="0" style="border:0" allowfullscreen
+            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+        </details>
+
+      </div>
+    </div>
+
+    <!-- Setup guide — shown only when Firebase isn't connected yet -->
+    <div id="admin-setup" class="admin-setup" hidden>
       <h2>Finish setup</h2>
-      <p class="admin-setup-lead">The dashboard shell is ready. A few steps connect sign-in and live data:</p>
+      <p class="admin-setup-lead">You're signed in, but Firebase isn't connected yet — so there's no live data to show. Two quick steps switch this into your live leads dashboard:</p>
       <ol class="admin-steps">
         <li>
           <b>Connect Firebase.</b> The web config is read automatically at deploy from your Vercel
-          <code>NEXT_PUBLIC_FIREBASE_*</code> environment variables — nothing to paste. If sign-in
-          isn't working, confirm those six vars exist in Vercel → Settings → Environment Variables.
+          <code>NEXT_PUBLIC_FIREBASE_*</code> environment variables — nothing to paste. If you're seeing
+          this on the live site, confirm those six vars exist in Vercel → Settings → Environment Variables.
         </li>
         <li>
-          <b>Turn on email/password login.</b> Firebase → Authentication → Sign-in method → enable
+          <b>Turn on email/password login &amp; publish the rules.</b> Firebase → Authentication → Sign-in method → enable
           <b>Email/Password</b>. Then Authentication → Users → <b>Add user</b> with your admin email and a password.
           Make sure a <code>/users</code> doc exists with that same email, <code>role: "admin"</code>, <code>status: "active"</code>,
           and publish the rules from <code>/firestore.rules</code>.
         </li>
-        <li>
-          <b>Turn on website tracking.</b> Create a free Google Analytics 4 property, copy its
-          Measurement ID (<code>G-XXXXXXXXXX</code>), and paste it into <code>/js/analytics.js</code>.
-        </li>
-        <li>
-          <b>Build the dashboard.</b> In <a href="https://lookerstudio.google.com" target="_blank" rel="noopener">Looker Studio</a>,
-          create a report on that GA4 property, then <b>Share → Embed report</b> and paste the URL into
-          <code>LOOKER_EMBED_URL</code> in <code>/js/admin.js</code>.
-        </li>
       </ol>
-      <p class="admin-setup-note">Keep the Looker report shared only to your Google account(s) so the data stays private. Send me the Firebase config, GA4 ID, and Looker URL and I’ll drop them in for you.</p>
+      <p class="admin-setup-note">Once connected, every request from your website contact form lands here automatically — nothing else to set up. <b>Optional:</b> to also embed Google Analytics traffic charts, add a GA4 ID to <code>/js/analytics.js</code> and a Looker embed URL to <code>/js/admin.js</code>.</p>
     </div>
-
-    <!-- Live dashboard -->
-    <iframe id="looker-frame" title="Ringco analytics (Looker Studio)" hidden
-      frameborder="0" style="border:0" allowfullscreen
-      sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
 
   </section>
 

@@ -246,15 +246,70 @@
     });
   }
 
-  /* ---------- Contact form (front-end only — wire to endpoint in prod) ---------- */
+  /* ---------- Contact form → saves the lead to Firestore ----------
+     The estimate/contact form writes each enquiry to the `leads`
+     collection, which is what powers the /admin "Leads & Enquiries"
+     dashboard. Firebase is lazy-loaded only on submit so the public
+     pages stay light. If the Firebase config isn't present (e.g. local
+     preview with no build step) we still confirm to the visitor rather
+     than showing an error. */
   var form = document.querySelector("#estimate-form");
   if (form) {
-    form.addEventListener("submit", function (e) {
+    var FB_SDK = "https://www.gstatic.com/firebasejs/10.12.0";
+    var submitting = false;
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
+      if (submitting) return;
+      submitting = true;
+
       var btn = form.querySelector("button[type=submit]");
-      btn.textContent = "Request sent ✓ — we'll call you shortly";
+      var original = btn.innerHTML;
+      var data = {
+        name: (form.name && form.name.value ? form.name.value : "").trim(),
+        phone: (form.phone && form.phone.value ? form.phone.value : "").trim(),
+        email: (form.email && form.email.value ? form.email.value : "").trim(),
+        service: (form.service && form.service.value ? form.service.value : "").trim(),
+        message: (form.message && form.message.value ? form.message.value : "").trim(),
+        status: "new",
+        page: location.pathname
+      };
+
       btn.disabled = true;
+      btn.textContent = "Sending…";
+
+      try {
+        var cfgMod = await import("/js/firebase-config.js");
+        var cfg = cfgMod && cfgMod.FIREBASE_CONFIG;
+        if (cfg && cfg.apiKey) {
+          var appMod = await import(FB_SDK + "/firebase-app.js");
+          var fsMod = await import(FB_SDK + "/firebase-firestore.js");
+          var app = appMod.initializeApp(cfg);
+          var db = fsMod.getFirestore(app);
+          data.createdAt = fsMod.serverTimestamp();
+          await fsMod.addDoc(fsMod.collection(db, "leads"), data);
+        }
+        // No Firebase config (local/preview): fall through to the success
+        // state so the flow is still testable end-to-end.
+      } catch (err) {
+        // Real failure while saving — let the visitor know so the lead
+        // isn't silently lost, and point them at the phone line.
+        btn.disabled = false;
+        btn.innerHTML = original;
+        submitting = false;
+        var f = form.querySelector(".form-error");
+        if (!f) {
+          f = document.createElement("p");
+          f.className = "form-error";
+          form.appendChild(f);
+        }
+        f.textContent = "Sorry — something went wrong sending that. Please call (405) 470-7696 and we'll help right away.";
+        return;
+      }
+
+      btn.textContent = "Request sent ✓ — we'll call you shortly";
       btn.style.opacity = "0.85";
+      form.reset();
     });
   }
 
