@@ -35,3 +35,19 @@ console.log("[build-config] wrote js/firebase-config.js:",
     projectId: cfg.projectId || "MISSING", storageBucket: cfg.storageBucket || "MISSING",
     messagingSenderId: mask(cfg.messagingSenderId), appId: mask(cfg.appId),
   }));
+
+/* ---------- cache-busting ----------
+   css/js are served with max-age=86400, so without versioned URLs a
+   visitor's phone can render NEW html with DAY-OLD css/js after a deploy
+   (symptom: broken layout that "works on my machine"). Stamp every local
+   css/js reference with the commit sha so each deploy is a new URL. */
+var ver = (env.VERCEL_GIT_COMMIT_SHA || String(Date.now())).slice(0, 10);
+var stamped = 0;
+fs.readdirSync(".").filter(function (f) { return /\.html$/.test(f) && !/\.dc\.html$/.test(f); })
+  .forEach(function (file) {
+    var html = fs.readFileSync(file, "utf8");
+    var out = html.replace(/(href|src)="(\/(?:css|js)\/[^"?]+\.(?:css|js))"/g,
+      '$1="$2?v=' + ver + '"');
+    if (out !== html) { fs.writeFileSync(file, out); stamped++; }
+  });
+console.log("[build-config] cache-busted css/js URLs in " + stamped + " html files (v=" + ver + ")");
