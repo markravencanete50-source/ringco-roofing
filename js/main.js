@@ -58,6 +58,42 @@
     });
   }
 
+  /* ---------- Deferred videos ([data-src]) ----------
+     The 5MB hero video must never block (or even join) the first paint:
+     - hero: desktop only, loaded when the browser is idle. Mobile keeps
+       the poster image — same visual, none of the download.
+     - gallery drones: any device, but only once scrolled near.
+     Skipped entirely for reduced-motion and Save-Data users. */
+  var SAVE_DATA = !!(navigator.connection && navigator.connection.saveData);
+  var heroVideo = document.querySelector(".hero video[data-src]");
+  if (heroVideo) {
+    if (window.matchMedia("(min-width:861px)").matches && !REDUCE && !SAVE_DATA) {
+      var loadHero = function () {
+        heroVideo.src = heroVideo.getAttribute("data-src");
+        heroVideo.removeAttribute("data-src");
+      };
+      if ("requestIdleCallback" in window) requestIdleCallback(loadHero, { timeout: 2500 });
+      else setTimeout(loadHero, 900);
+    }
+  }
+  document.querySelectorAll("video[data-src]").forEach(function (v) {
+    if (v === heroVideo) return;
+    var vio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (x) {
+        if (!x.isIntersecting) return;
+        vio.unobserve(v);
+        if (REDUCE || SAVE_DATA) {
+          // show the first frame only — no motion, minimal bytes
+          v.removeAttribute("autoplay");
+          v.preload = "metadata";
+        }
+        v.src = v.getAttribute("data-src");
+        v.removeAttribute("data-src");
+      });
+    }, { rootMargin: "320px 0px" });
+    vio.observe(v);
+  });
+
   /* ---------- Reveal on scroll (.reveal / [data-stagger]) ---------- */
   var io = new IntersectionObserver(
     function (entries) {

@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="/media/home-hero-poster.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="/media/home-hero-poster.jpg" fetchpriority="high">
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/analytics.js"></script>
 <script type="application/ld+json">
@@ -37,7 +38,7 @@
 <div class="scroll-progress" aria-hidden="true"></div>
 
 <header class="site-header">
-  <a class="logo" href="/"><img src="/assets/ringco-logo-landscape.png" alt="Ringco Roofing and Construction"></a>
+  <a class="logo" href="/"><img src="/assets/ringco-logo-landscape.png" alt="Ringco Roofing and Construction" width="480" height="120"></a>
   <nav class="main-nav" aria-label="Primary">
     <a href="/services">Services</a>
     <a href="/insurance-claims">Insurance Claims</a>
@@ -64,7 +65,7 @@
 
 <!-- HERO -->
 <section class="hero" data-screen-label="Home hero">
-  <video src="/media/home-hero.mp4" poster="/media/home-hero-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+  <video data-src="/media/home-hero.mp4" poster="/media/home-hero-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
   <div class="hero-overlay"></div>
   <div class="hero-inner">
     <span class="hero-eyebrow reveal in">Roofing · Siding · Gutters · Storm Claims — Oklahoma County, OK</span>
@@ -174,8 +175,8 @@
     </div>
     <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:32px;margin-top:48px;align-items:stretch" class="ba-duo">
       <div class="ba-wrap reveal" data-fx="scale">
-        <img src="/media/home-before.jpg" alt="Roof before storm-damage replacement">
-        <img class="ba-after" src="/media/home-after.jpg" alt="Roof after full replacement by Ringco">
+        <img src="/media/home-before.jpg" alt="Roof before storm-damage replacement" loading="lazy" decoding="async">
+        <img class="ba-after" src="/media/home-after.jpg" alt="Roof after full replacement by Ringco" loading="lazy" decoding="async">
         <div class="ba-handle"></div>
         <span class="ba-tag before">BEFORE</span>
         <span class="ba-tag after">AFTER</span>
@@ -197,7 +198,7 @@
 <!-- CTA -->
 <section class="cta-band" data-screen-label="CTA">
   <div class="cta-inner reveal" data-fx="scale">
-    <img class="bg" src="/media/cta-drone.jpg" alt="" aria-hidden="true" loading="lazy">
+    <img class="bg" fetchpriority="high" src="/media/cta-drone.jpg" alt="" aria-hidden="true" loading="lazy">
     <div class="aurora" aria-hidden="true"></div>
     <div class="cta-content">
       <div>
