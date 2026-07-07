@@ -362,6 +362,25 @@
     function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML; }
     function rank(f) { return SEV[(f.properties.severity || "").toLowerCase()] || 0; }
 
+    /* Pin the banner just below the real navbar pill, matching its inset.
+       The header's height varies (nav items wrap at some widths), so a
+       fixed CSS offset overlaps — measure instead, and re-measure on
+       resize / once fonts settle. */
+    function placeBanner(bar) {
+      var header = document.querySelector(".site-header");
+      var place = function () {
+        if (!header || !bar.isConnected) return;
+        var r = header.getBoundingClientRect();
+        bar.style.top = Math.round(r.bottom + 10) + "px";
+        bar.style.left = Math.round(r.left) + "px";
+        bar.style.right = Math.round(document.documentElement.clientWidth - r.right) + "px";
+      };
+      place();
+      window.addEventListener("resize", place);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+      setTimeout(place, 350); // layout settles (logo img, font swap)
+    }
+
     function render(f) {
       var p = f.properties;
       var id = f.id || p.event;
@@ -381,6 +400,7 @@
         '<button class="sa-close" type="button" aria-label="Dismiss weather alert">✕</button>';
       document.body.appendChild(bar);
       document.body.classList.add("storm-on");
+      placeBanner(bar);
       // setTimeout (not rAF) so the entrance still runs in background tabs
       setTimeout(function () { bar.classList.add("show"); }, 30);
       bar.querySelector(".sa-close").addEventListener("click", function () {
@@ -416,6 +436,7 @@
         '<button class="sa-close" type="button" aria-label="Dismiss storm notice">✕</button>';
       document.body.appendChild(bar);
       document.body.classList.add("storm-on");
+      placeBanner(bar);
       setTimeout(function () { bar.classList.add("show"); }, 30);
       bar.querySelector(".sa-close").addEventListener("click", function () {
         bar.classList.remove("show");
