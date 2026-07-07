@@ -449,7 +449,29 @@ if (listEl) {
 
   let alerts = [];   // alerts for the selected range (drives the list + report)
   let active = [];   // active alerts (drives badge, ribbon, lead matching)
-  let inPath = [];   // leads matched to active alert counties
+  let inPath = [];   // [{lead, storm, live}] — leads matched to active OR tracked storms
+
+  /* tracked storms — previous alerts the user toggled ON so their areas
+     keep matching leads (post-storm canvassing). Persisted across sessions. */
+  const tracked = new Map();
+  try {
+    JSON.parse(localStorage.getItem("ringco-storm-tracked") || "[]")
+      .forEach((a) => a && a.id && tracked.set(a.id, a));
+  } catch (_) {}
+  function saveTracked() {
+    try {
+      localStorage.setItem("ringco-storm-tracked",
+        JSON.stringify([...tracked.values()].slice(-20))); // keep it bounded
+    } catch (_) {}
+  }
+  const isLive = (id) => active.some((a) => a.id === id);
+  /* everything currently feeding the lead matcher: live alerts + tracked ones */
+  function matchSources() {
+    const m = new Map();
+    active.forEach((a) => m.set(a.id, a));
+    tracked.forEach((a, id) => { if (!m.has(id)) m.set(id, a); });
+    return [...m.values()];
+  }
 
   /* ---------- data ---------- */
   const iso = (d) => d ? new Date(d).toISOString().replace(/\.\d{3}Z$/, "Z") : "";
@@ -499,29 +521,43 @@ if (listEl) {
     return null;
   }
   function matchLeads() {
-    if (!active.length) { inPath = []; return; }
-    const hot = new Set();
-    active.forEach((a) => METRO_COUNTIES.forEach((c) => {
-      if (new RegExp("\\b" + c + "\\b", "i").test(a.areas)) hot.add(c);
-    }));
-    inPath = allLeads.filter((l) => {
+    const sources = matchSources();
+    if (!sources.length) { inPath = []; return; }
+    inPath = [];
+    allLeads.forEach((l) => {
       const c = leadCounty(l);
-      return c && hot.has(c);
+      if (!c) return;
+      const storm = sources.find((s) => new RegExp("\\b" + c + "\\b", "i").test(s.areas));
+      if (storm) inPath.push({ lead: l, storm, live: isLive(storm.id) });
     });
   }
+  const fmtDay = (d) => d ? new Date(d).toLocaleDateString([], { month: "short", day: "numeric" }) : "recently";
+  // active storm → safety check-in; tracked past storm → inspection offer
   const SAFE_MSG = (name, event) =>
     "Hi " + (name || "there") + ", it's Ringco Roofing & Construction. A " + event +
     " has been issued for your area — just checking in. If your roof takes any damage, " +
     "we offer free inspections and 24/7 emergency tarping: (405) 470-7696. Stay safe!";
+  const PAST_MSG = (name, event, day) =>
+    "Hi " + (name || "there") + ", it's Ringco Roofing & Construction. Your area was hit by a " + event +
+    " on " + day + " — hail and wind damage often isn't visible from the ground. " +
+    "We're doing free roof inspections nearby: (405) 470-7696.";
 
   /* ---------- rendering ---------- */
   const fmtDT = (d) => d ? new Date(d).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—";
 
   function alertRow(a, i) {
     const row = document.createElement("article");
-    row.className = "lead-row storm-row";
+    row.className = "lead-row storm-row" + (tracked.has(a.id) ? " tracked" : "");
     if (!REDUCE && i < 12) { row.classList.add("anim"); row.style.animationDelay = (i * 0.045) + "s"; }
     const sev = (a.severity || "unknown").toLowerCase();
+    // live alerts always feed the matcher; past ones get a Track toggle
+    const action = isLive(a.id)
+      ? '<span class="storm-auto" title="Active alerts always match leads">🔴 Auto-matched</span>'
+      : '<button type="button" class="storm-track' + (tracked.has(a.id) ? " on" : "") +
+        '" data-id="' + esc(a.id) + '" aria-pressed="' + (tracked.has(a.id) ? "true" : "false") +
+        '" title="Match leads in this storm\'s area (post-storm outreach)">' +
+        '<span class="st-knob" aria-hidden="true"></span><span class="st-label">' +
+        (tracked.has(a.id) ? "Matching leads" : "Match leads") + "</span></button>";
     row.innerHTML =
       '<div class="lead-when">' + esc(fmtDT(a.onset)) +
         (a.ends ? '<span class="sr-until">until ' + esc(fmtDT(a.ends)) + "</span>" : "") + "</div>" +
@@ -530,7 +566,8 @@ if (listEl) {
           ' <span class="sev-badge sev-' + esc(sev) + '">' + esc(a.severity) + "</span></div>" +
         (a.headline ? '<div class="lead-contacts">' + esc(a.headline) + "</div>" : "") +
         '<p class="lead-msg storm-areas-txt">📍 ' + esc(a.areas) + "</p>" +
-      "</div>";
+      "</div>" +
+      '<div class="lead-actions">' + action + "</div>";
     return row;
   }
 
@@ -552,31 +589,42 @@ if (listEl) {
     setNum("storm-kpi-leads", inPath.length);
     $leadsPanel.hidden = !inPath.length;
     if (!inPath.length) { $leadsList.innerHTML = ""; return; }
-    const event = active.length ? active[0].event : "severe weather alert";
+    const anyLive = inPath.some((e) => e.live);
+    el("storm-leads-title").textContent = anyLive
+      ? "⚠️ Clients possibly in the path — check in & offer help"
+      : "🏠 Clients in storm-hit areas — offer a free inspection";
     $leadsList.innerHTML = "";
-    inPath.forEach((l) => {
+    inPath.forEach(({ lead: l, storm, live }) => {
       const digits = (l.phone || "").replace(/[^\d+]/g, "");
-      const body = encodeURIComponent(SAFE_MSG(l.name.split(" ")[0], event));
+      const first = (l.name || "").split(" ")[0];
+      const msg = live ? SAFE_MSG(first, storm.event) : PAST_MSG(first, storm.event, fmtDay(storm.onset));
+      const body = encodeURIComponent(msg);
+      const subject = encodeURIComponent(live
+        ? "Storm heads-up from Ringco Roofing"
+        : "Free roof inspection after the " + storm.event);
       const row = document.createElement("article");
       row.className = "lead-row storm-lead";
       row.innerHTML =
         '<div class="lead-when">' + esc(l.city || "OKC metro") + "</div>" +
         '<div class="lead-body"><div class="lead-name">' + esc(l.name || "(no name)") + "</div>" +
-          (l.phone ? '<div class="lead-contacts">' + esc(l.phone) + "</div>" : "") + "</div>" +
+          (l.phone ? '<div class="lead-contacts">' + esc(l.phone) + "</div>" : "") +
+          '<div class="lead-tags"><span class="storm-hit-tag' + (live ? " live" : "") + '">' +
+            (live ? "🔴 " : "⛈️ ") + esc(storm.event) + (live ? " · active now" : " · " + esc(fmtDay(storm.onset))) +
+          "</span></div></div>" +
         '<div class="lead-actions storm-lead-actions">' +
           (digits ? '<a class="tool-btn" href="sms:' + esc(digits) + "?&body=" + body + '">💬 Text</a>' +
                     '<a class="tool-btn" href="tel:' + esc(digits) + '">📞 Call</a>' : "") +
           (l.email ? '<a class="tool-btn" href="mailto:' + esc(l.email) +
-            "?subject=" + encodeURIComponent("Storm heads-up from Ringco Roofing") +
-            "&body=" + body + '">✉️ Email</a>' : "") +
+            "?subject=" + subject + "&body=" + body + '">✉️ Email</a>' : "") +
         "</div>";
       $leadsList.appendChild(row);
     });
   }
 
   function maybeToast() {
-    if (!active.length || !inPath.length) return;
-    const sig = active.map((a) => a.id).join("|") + "#" + inPath.length;
+    const liveHits = inPath.filter((e) => e.live).length;
+    if (!active.length || !liveHits) return; // toast only for real, live danger
+    const sig = active.map((a) => a.id).join("|") + "#" + liveHits;
     try {
       if (sessionStorage.getItem("ringco-storm-toast") === sig) return;
       sessionStorage.setItem("ringco-storm-toast", sig);
@@ -584,7 +632,8 @@ if (listEl) {
     const t = document.createElement("div");
     t.className = "storm-toast";
     t.setAttribute("role", "status");
-    t.innerHTML = "⚠️ <b>" + inPath.length + " client" + (inPath.length > 1 ? "s" : "") +
+    const liveCount = inPath.filter((e) => e.live).length;
+    t.innerHTML = "⚠️ <b>" + liveCount + " client" + (liveCount > 1 ? "s" : "") +
       "</b> may be in the path of the " + esc(active[0].event) +
       '. <button type="button">Open Storm center</button>';
     document.body.appendChild(t);
@@ -667,9 +716,10 @@ if (listEl) {
         esc(fmtDT(a.onset)) + "</td><td>" + esc(fmtDT(a.ends)) + "</td><td>" + esc(a.areas) + "</td></tr>").join("") +
       "</table>" +
       (inPath.length
-        ? "<h2>Clients possibly in the path (active alerts)</h2><table><tr><th>Name</th><th>City</th><th>Phone</th><th>Email</th></tr>" +
-          inPath.map((l) => "<tr><td>" + esc(l.name) + "</td><td>" + esc(l.city) + "</td><td>" +
-            esc(l.phone) + "</td><td>" + esc(l.email) + "</td></tr>").join("") + "</table>"
+        ? "<h2>Clients in matched storm areas (active + tracked)</h2><table><tr><th>Name</th><th>City</th><th>Phone</th><th>Email</th><th>Storm</th></tr>" +
+          inPath.map((e) => "<tr><td>" + esc(e.lead.name) + "</td><td>" + esc(e.lead.city) + "</td><td>" +
+            esc(e.lead.phone) + "</td><td>" + esc(e.lead.email) + "</td><td>" +
+            esc(e.storm.event) + (e.live ? " (active)" : " · " + esc(fmtDay(e.storm.onset))) + "</td></tr>").join("") + "</table>"
         : "") +
       "<p class='sub' style='margin-top:26px'>Ringco Roofing &amp; Construction · (405) 470-7696 · Oklahoma County &amp; surrounding areas</p>" +
       "</body></html>");
@@ -697,6 +747,23 @@ if (listEl) {
       $loading.hidden = true; $error.hidden = false;
     }
   }
+
+  // toggle "Match leads" on a previous storm — joins/leaves the matching pool
+  $list.addEventListener("click", (e) => {
+    const b = e.target.closest(".storm-track");
+    if (!b) return;
+    const id = b.dataset.id;
+    const a = alerts.find((x) => x.id === id) || tracked.get(id);
+    if (!a) return;
+    const on = !tracked.has(id);
+    if (on) tracked.set(id, a); else tracked.delete(id);
+    saveTracked();
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.querySelector(".st-label").textContent = on ? "Matching leads" : "Match leads";
+    b.closest(".storm-row").classList.toggle("tracked", on);
+    renderLeadsPanel();
+  });
 
   $range.addEventListener("change", load);
   el("storm-refresh").addEventListener("click", load);
