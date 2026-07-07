@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin — Analytics | Ringco Roofing</title>
+<title>Admin — Dashboard | Ringco Roofing</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#092849">
+<script>/* theme boot — before CSS paints, no flash */
+try{var t=localStorage.getItem("ringco-theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark";}catch(e){}</script>
 <link rel="icon" type="image/png" href="/assets/ringco-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +20,7 @@
   <a class="logo" href="/"><img src="/assets/ringco-logo-landscape.png" alt="Ringco Roofing and Construction"></a>
   <div class="admin-top-right">
     <span class="admin-title">Admin Dashboard</span>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch between light and dark mode" title="Light / dark mode"><span id="tt-ico" aria-hidden="true">🌙</span></button>
     <button id="admin-signout" class="btn btn-ghost-dark" type="button" hidden>Sign out</button>
   </div>
 </header>
@@ -48,71 +51,229 @@
     <div id="admin-live" class="admin-live" hidden>
       <div class="dash-wrap">
 
-        <div class="dash-head">
-          <div>
-            <h1 class="dash-h1">Leads &amp; enquiries</h1>
-            <p class="dash-sub">Every request from your website, updating live.</p>
-          </div>
+        <!-- Storm ribbon — appears only while severe weather is active in the metro -->
+        <button id="admin-storm" class="admin-storm" type="button" hidden></button>
+
+        <div class="dash-topline">
+          <nav class="dash-tabs" id="dash-tabs" role="tablist" aria-label="Dashboard sections">
+            <button type="button" role="tab" data-tab="leads" class="on" aria-selected="true">📥 Leads</button>
+            <button type="button" role="tab" data-tab="storm" aria-selected="false">⛈️ Storm center<span id="storm-badge" class="tab-badge" hidden></span></button>
+            <button type="button" role="tab" data-tab="reviews" aria-selected="false">⭐ Reviews</button>
+          </nav>
           <span id="dash-live-dot" class="live-dot" title="Connected — updates in real time">Live</span>
         </div>
 
-        <!-- KPI cards -->
-        <div class="stat-row">
-          <div class="stat-card">
-            <span class="stat-ico">📥</span>
-            <div class="stat-num" id="kpi-total">—</div>
-            <div class="stat-label">Total leads</div>
-          </div>
-          <div class="stat-card accent">
-            <span class="stat-ico">🔔</span>
-            <div class="stat-num" id="kpi-new">—</div>
-            <div class="stat-label">New / unactioned</div>
-          </div>
-          <div class="stat-card">
-            <span class="stat-ico">📅</span>
-            <div class="stat-num" id="kpi-week">—</div>
-            <div class="stat-label">Last 7 days</div>
-          </div>
-          <div class="stat-card">
-            <span class="stat-ico">⭐</span>
-            <div class="stat-num" id="kpi-service">—</div>
-            <div class="stat-label">Top request</div>
-          </div>
-        </div>
+        <!-- ================= TAB: LEADS ================= -->
+        <div id="tab-leads" class="dash-tab on" role="tabpanel">
 
-        <!-- Leads panel -->
-        <div class="lead-panel">
-          <div class="lead-toolbar">
-            <div class="seg" id="lead-filter" role="tablist" aria-label="Filter leads by status">
-              <button type="button" data-f="all" class="on">All</button>
-              <button type="button" data-f="new">New</button>
-              <button type="button" data-f="contacted">Contacted</button>
-              <button type="button" data-f="closed">Closed</button>
-            </div>
-            <div class="lead-search">
-              <span aria-hidden="true">🔍</span>
-              <input id="lead-search" type="search" placeholder="Search name, phone, email…" autocomplete="off">
+          <div class="dash-head">
+            <div>
+              <h1 class="dash-h1">Leads &amp; enquiries</h1>
+              <p class="dash-sub">Every request from your website, updating live.</p>
             </div>
           </div>
 
-          <div id="lead-list" class="lead-list" aria-live="polite"></div>
-
-          <div id="lead-loading" class="lead-state">Loading leads…</div>
-          <div id="lead-empty" class="lead-state" hidden>
-            <span class="lead-state-ico">🗂️</span>
-            <b>No leads yet.</b>
-            <p>Requests from your website contact form will appear here automatically — no refresh needed.</p>
+          <!-- KPI cards -->
+          <div class="stat-row">
+            <div class="stat-card">
+              <span class="stat-ico">📥</span>
+              <div class="stat-num" id="kpi-total">—</div>
+              <div class="stat-label">Total leads</div>
+            </div>
+            <div class="stat-card accent">
+              <span class="stat-ico">🔔</span>
+              <div class="stat-num" id="kpi-new">—</div>
+              <div class="stat-label">New / unactioned</div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-ico">📅</span>
+              <div class="stat-num" id="kpi-week">—</div>
+              <div class="stat-label">Last 7 days</div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-ico">⭐</span>
+              <div class="stat-num" id="kpi-service">—</div>
+              <div class="stat-label">Top request</div>
+            </div>
           </div>
-          <div id="lead-none" class="lead-state" hidden>No leads match this filter.</div>
+
+          <!-- Leads panel -->
+          <div class="lead-panel">
+            <div class="lead-toolbar">
+              <div class="seg" id="lead-filter" role="tablist" aria-label="Filter leads by status">
+                <button type="button" data-f="all" class="on">All</button>
+                <button type="button" data-f="new">New</button>
+                <button type="button" data-f="contacted">Contacted</button>
+                <button type="button" data-f="closed">Closed</button>
+              </div>
+              <div class="tool-group">
+                <select id="lead-service-filter" class="tool-select" aria-label="Filter by requested service">
+                  <option value="all">All services</option>
+                </select>
+                <div class="date-range" title="Show leads between two dates">
+                  <span aria-hidden="true">📅</span>
+                  <input type="date" id="lead-from" aria-label="From date">
+                  <span class="dr-sep" aria-hidden="true">→</span>
+                  <input type="date" id="lead-to" aria-label="To date">
+                  <button type="button" id="lead-date-clear" class="dr-clear" hidden aria-label="Clear date filter">✕</button>
+                </div>
+                <div class="lead-search">
+                  <span aria-hidden="true">🔍</span>
+                  <input id="lead-search" type="search" placeholder="Search name, phone, city…" autocomplete="off">
+                </div>
+              </div>
+            </div>
+
+            <div id="lead-list" class="lead-list" aria-live="polite"></div>
+
+            <div id="lead-loading" class="lead-state">Loading leads…</div>
+            <div id="lead-empty" class="lead-state" hidden>
+              <span class="lead-state-ico">🗂️</span>
+              <b>No leads yet.</b>
+              <p>Requests from your website contact form will appear here automatically — no refresh needed.</p>
+            </div>
+            <div id="lead-none" class="lead-state" hidden>No leads match these filters.</div>
+          </div>
+
+          <!-- Optional website-traffic analytics (only if a Looker URL is set) -->
+          <details id="ga-panel" class="ga-panel" hidden>
+            <summary>Website traffic analytics (Google&nbsp;Analytics)</summary>
+            <iframe id="looker-frame" title="Ringco analytics (Looker Studio)"
+              frameborder="0" style="border:0" allowfullscreen
+              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+          </details>
+
         </div>
 
-        <!-- Optional website-traffic analytics (only if a Looker URL is set) -->
-        <details id="ga-panel" class="ga-panel" hidden>
-          <summary>Website traffic analytics (Google&nbsp;Analytics)</summary>
-          <iframe id="looker-frame" title="Ringco analytics (Looker Studio)"
-            frameborder="0" style="border:0" allowfullscreen
-            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
-        </details>
+        <!-- ================= TAB: STORM CENTER ================= -->
+        <div id="tab-storm" class="dash-tab" role="tabpanel">
+
+          <div class="dash-head">
+            <div>
+              <h1 class="dash-h1">Storm center</h1>
+              <p class="dash-sub">Live National Weather Service data for the OKC metro — incoming storms, recent history, and which of your leads may be in the path.</p>
+            </div>
+            <div class="tool-group">
+              <select id="storm-range" class="tool-select" aria-label="Storm history range">
+                <option value="active">Active now</option>
+                <option value="7" selected>Last 7 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+              </select>
+              <button type="button" id="storm-refresh" class="tool-btn" title="Refresh storm data">↻ Refresh</button>
+              <button type="button" id="storm-csv" class="tool-btn" title="Download the current view as a CSV report">⬇ CSV</button>
+              <button type="button" id="storm-print" class="tool-btn" title="Open a printable storm report">🖨 Report</button>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-card" id="storm-card-active">
+              <span class="stat-ico">🚨</span>
+              <div class="stat-num" id="storm-kpi-active">—</div>
+              <div class="stat-label">Active alerts right now</div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-ico">⛈️</span>
+              <div class="stat-num" id="storm-kpi-range">—</div>
+              <div class="stat-label" id="storm-kpi-range-label">Alerts in range</div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-ico">📍</span>
+              <div class="stat-num stat-txt" id="storm-kpi-area">—</div>
+              <div class="stat-label">Most-affected area</div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-ico">👥</span>
+              <div class="stat-num" id="storm-kpi-leads">—</div>
+              <div class="stat-label">Leads in storm path</div>
+            </div>
+          </div>
+
+          <!-- Leads that sit inside an active alert area — outreach panel -->
+          <div id="storm-leads-panel" class="lead-panel storm-leads" hidden>
+            <div class="panel-title">⚠️ Clients possibly in the path — check in &amp; offer help</div>
+            <div id="storm-leads-list" class="lead-list"></div>
+          </div>
+
+          <div class="lead-panel">
+            <div id="storm-areas" class="storm-areas" hidden></div>
+            <div id="storm-list" class="lead-list"></div>
+            <div id="storm-loading" class="lead-state">Checking the skies…</div>
+            <div id="storm-empty" class="lead-state" hidden>
+              <span class="lead-state-ico">🌤️</span>
+              <b>All clear.</b>
+              <p>No roof-threatening weather for the OKC metro in this range. Switch the range above to look further back.</p>
+            </div>
+            <div id="storm-error" class="lead-state" hidden>Couldn't reach the National Weather Service — check your connection and hit ↻ Refresh.</div>
+          </div>
+
+          <p class="data-src">Source: National Weather Service (api.weather.gov) · Coverage: Oklahoma, Cleveland, Canadian, Logan, McClain, Grady, Pottawatomie, Lincoln &amp; Kingfisher counties</p>
+        </div>
+
+        <!-- ================= TAB: GOOGLE REVIEWS ================= -->
+        <div id="tab-reviews" class="dash-tab" role="tabpanel">
+
+          <div class="dash-head">
+            <div>
+              <h1 class="dash-h1">Google reviews</h1>
+              <p class="dash-sub">Read and reply to your Google Business Profile reviews without leaving this dashboard.</p>
+            </div>
+            <div class="tool-group">
+              <select id="rev-location" class="tool-select" aria-label="Business location" hidden></select>
+              <button type="button" id="rev-refresh" class="tool-btn" hidden>↻ Refresh</button>
+            </div>
+          </div>
+
+          <!-- Shown until GOOGLE_CLIENT_ID is configured in /js/admin.js -->
+          <div id="rev-setup" class="rev-setup" hidden>
+            <h3>One-time Google connection</h3>
+            <ol>
+              <li>In <b>Google Cloud Console</b>, create a project and enable the <b>Business Profile APIs</b> — Google requires a short <a href="https://developers.google.com/my-business/content/prereqs" target="_blank" rel="noopener">access request</a> (free, usually approved in a few days).</li>
+              <li>Create an <b>OAuth client ID</b> (type: Web application) and add this site's URL to <i>Authorized JavaScript origins</i>.</li>
+              <li>Paste the client ID into <code>GOOGLE_CLIENT_ID</code> at the top of <code>/js/admin.js</code> and redeploy.</li>
+            </ol>
+            <p>Once connected, every review appears below with a reply box — replies publish straight to your public Google listing.</p>
+          </div>
+
+          <!-- Shown when configured but not yet authorized this session -->
+          <div id="rev-connect" class="rev-connect" hidden>
+            <span class="rev-g" aria-hidden="true">G</span>
+            <h3>Connect Google Business Profile</h3>
+            <p>Sign in with the Google account that manages the Ringco listing. Replies you write here publish directly to Google.</p>
+            <button type="button" id="rev-connect-btn" class="btn btn-primary">Connect Google <span class="arr">→</span></button>
+            <p id="rev-err" class="gate-err" role="alert"></p>
+          </div>
+
+          <div id="rev-main" class="rev-main" hidden>
+            <div class="stat-row rev-stats">
+              <div class="stat-card accent">
+                <span class="stat-ico">⭐</span>
+                <div class="stat-num" id="rev-kpi-avg">—</div>
+                <div class="stat-label">Average rating</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-ico">💬</span>
+                <div class="stat-num" id="rev-kpi-total">—</div>
+                <div class="stat-label">Total reviews</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-ico">📝</span>
+                <div class="stat-num" id="rev-kpi-unreplied">—</div>
+                <div class="stat-label">Awaiting your reply</div>
+              </div>
+            </div>
+            <div class="lead-panel">
+              <div id="rev-list" class="lead-list"></div>
+              <div id="rev-loading" class="lead-state" hidden>Loading reviews…</div>
+              <div id="rev-empty" class="lead-state" hidden>
+                <span class="lead-state-ico">⭐</span>
+                <b>No reviews yet.</b>
+                <p>Reviews left on your Google Business Profile will show up here.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
 
       </div>
     </div>

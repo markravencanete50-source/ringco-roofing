@@ -269,6 +269,7 @@
         name: (form.name && form.name.value ? form.name.value : "").trim(),
         phone: (form.phone && form.phone.value ? form.phone.value : "").trim(),
         email: (form.email && form.email.value ? form.email.value : "").trim(),
+        city: (form.city && form.city.value ? form.city.value : "").trim(),
         service: (form.service && form.service.value ? form.service.value : "").trim(),
         message: (form.message && form.message.value ? form.message.value : "").trim(),
         status: "new",
@@ -380,7 +381,8 @@
         '<button class="sa-close" type="button" aria-label="Dismiss weather alert">✕</button>';
       document.body.appendChild(bar);
       document.body.classList.add("storm-on");
-      requestAnimationFrame(function () { bar.classList.add("show"); });
+      // setTimeout (not rAF) so the entrance still runs in background tabs
+      setTimeout(function () { bar.classList.add("show"); }, 30);
       bar.querySelector(".sa-close").addEventListener("click", function () {
         bar.classList.remove("show");
         document.body.classList.remove("storm-on");

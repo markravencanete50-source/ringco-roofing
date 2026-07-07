@@ -418,24 +418,21 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7.5px) rotate(
 /* Scroll progress bar — brand gradient, tracks page scroll */
 .scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;background:var(--grad);z-index:200;pointer-events:none;will-change:transform;box-shadow:0 0 12px rgba(0,92,151,.55)}
 
-/* Storm alert bar — live NWS severe-weather notifications (JS-injected) */
-.storm-alert{position:fixed;top:0;left:0;right:0;z-index:250;display:none;align-items:center;justify-content:center;gap:14px;padding:10px 50px 10px 20px;font:600 13.5px var(--font-body);color:#fff;text-align:center;box-shadow:0 6px 20px rgba(0,11,23,.25);transform:translateY(-100%);transition:transform .4s var(--ease)}
+/* Storm alert bar — live NWS severe-weather notifications (JS-injected).
+   Sits just BELOW the floating navbar pill, matching its inset + radius. */
+.storm-alert{position:fixed;top:92px;left:24px;right:24px;z-index:90;display:none;align-items:center;justify-content:center;gap:14px;padding:10px 50px 10px 20px;font:600 13.5px var(--font-body);color:#fff;text-align:center;border-radius:16px;box-shadow:0 10px 28px rgba(0,11,23,.3);transform:translateY(-16px);opacity:0;transition:transform .45s var(--ease),opacity .45s var(--ease)}
 .storm-alert.warning{background:linear-gradient(100deg,#7d1414,#c0392b)}
 .storm-alert.watch{background:linear-gradient(100deg,#8a5a0c,#d98614)}
-.storm-alert.show{display:flex;transform:none}
+.storm-alert.show{display:flex;transform:none;opacity:1}
 .storm-alert .sa-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#fff;animation:saPulse 1.6s ease-out infinite}
 @keyframes saPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.65)}70%{box-shadow:0 0 0 7px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
 .storm-alert b{font-family:var(--font-head);font-weight:800}
 .storm-alert .sa-cta{flex:none;color:#fff;font-family:var(--font-head);font-weight:800;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
 .storm-alert .sa-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:27px;height:27px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:14px;line-height:1;cursor:pointer;transition:background .2s}
 .storm-alert .sa-close:hover{background:rgba(255,255,255,.34)}
-body.storm-on .site-header{top:56px}
-body.storm-on .scroll-progress{top:44px}
 @media (max-width:640px){
-  .storm-alert{gap:10px;padding:9px 44px 9px 14px;font-size:12.5px}
+  .storm-alert{top:94px;left:12px;right:12px;gap:10px;padding:9px 44px 9px 14px;font-size:12.5px}
   .storm-alert .sa-msg-extra{display:none}
-  body.storm-on .site-header{top:78px}
-  body.storm-on .scroll-progress{top:64px}
 }
 
 /* Aurora ambient glow for dark sections (drifting brand light) */
@@ -500,4 +497,170 @@ body.storm-on .scroll-progress{top:44px}
   .hero-ctas .btn{width:100%;justify-content:center}
   .footer-base{flex-direction:column}
   .header-actions .btn{padding:11px 18px;font-size:13.5px}
+}
+
+/* ============================================================
+   ADMIN v2 — tabs · storm center · Google reviews · dark mode
+   All admin-only; guarded for reduced motion at the bottom.
+   ============================================================ */
+
+/* --- theme toggle --- */
+.theme-toggle{width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:var(--cloud);font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:transform .3s var(--ease),background .25s,border-color .25s}
+.theme-toggle:hover{transform:rotate(24deg) scale(1.08);border-color:var(--blue-mid)}
+
+/* --- tab bar --- */
+.dash-topline{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.dash-tabs{display:inline-flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px;box-shadow:var(--shadow-sm)}
+.dash-tabs button{position:relative;display:inline-flex;align-items:center;gap:7px;border:0;background:transparent;font:700 14px var(--font-head);color:var(--muted);padding:10px 18px;border-radius:999px;cursor:pointer;transition:color .25s,background .25s,transform .2s}
+.dash-tabs button:hover{color:var(--navy);transform:translateY(-1px)}
+.dash-tabs button.on{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(2,71,120,.35)}
+.tab-badge{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:#e04545;color:#fff;font:800 11px var(--font-body);animation:badgePulse 2s var(--ease) infinite}
+@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* --- tab panels + row entrance motion --- */
+.dash-tab{display:none}
+.dash-tab.on{display:flex;flex-direction:column;gap:26px;animation:tabIn .45s var(--ease)}
+@keyframes tabIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.lead-row.anim,.rev-row.anim{opacity:0;animation:rowIn .5s var(--ease) forwards}
+@keyframes rowIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.stat-card{transition:transform .35s var(--ease),box-shadow .35s}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.dash-tab.on .stat-row .stat-card{animation:rowIn .5s var(--ease) both}
+.dash-tab.on .stat-row .stat-card:nth-child(2){animation-delay:.06s}
+.dash-tab.on .stat-row .stat-card:nth-child(3){animation-delay:.12s}
+.dash-tab.on .stat-row .stat-card:nth-child(4){animation-delay:.18s}
+.stat-num{font-variant-numeric:tabular-nums}
+.stat-txt{font-size:19px;line-height:1.25;margin-top:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* --- toolbar extras: service select, calendar range, tool buttons --- */
+.tool-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;justify-content:flex-end}
+.tool-select{appearance:none;-webkit-appearance:none;background:var(--cloud) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2351606F' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;border:1px solid var(--line);border-radius:999px;font:600 13px var(--font-body);color:var(--ink);padding:9px 34px 9px 15px;cursor:pointer;max-width:220px;transition:border-color .25s}
+.tool-select:hover,.tool-select:focus{border-color:var(--blue-mid);outline:none}
+.date-range{display:flex;align-items:center;gap:6px;background:var(--cloud);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;transition:border-color .25s}
+.date-range:focus-within{border-color:var(--blue-mid)}
+.date-range input{border:0;background:transparent;font:600 12.5px var(--font-body);color:var(--ink);outline:none;width:118px}
+.date-range .dr-sep{color:var(--faint)}
+.dr-clear{border:0;background:var(--tint);color:var(--blue);width:22px;height:22px;border-radius:50%;font-size:11px;line-height:1;cursor:pointer;transition:background .2s}
+.dr-clear:hover{background:var(--sky)}
+.tool-btn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:#fff;color:var(--blue);font:700 13px var(--font-body);padding:9px 15px;border-radius:999px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .2s,border-color .2s,color .2s,transform .2s}
+.tool-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff;transform:translateY(-1px)}
+
+/* --- lead tags (service + city) --- */
+.lead-tags{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.lead-service,.lead-city{display:inline-block;font:600 12.5px var(--font-body);padding:4px 11px;border-radius:999px}
+.lead-service{color:var(--blue);background:var(--tint)}
+.lead-city{color:#7a5b12;background:#fdf3d9}
+
+/* --- admin storm ribbon (below the top bar, above tabs) --- */
+.admin-storm{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:14px;padding:12px 18px;background:linear-gradient(100deg,#7d1414,#c0392b);color:#fff;font:600 14px var(--font-body);cursor:pointer;box-shadow:0 10px 26px rgba(125,20,20,.35);animation:rowIn .5s var(--ease)}
+.admin-storm b{font-family:var(--font-head);font-weight:800}
+.admin-storm:hover{filter:brightness(1.08)}
+.admin-storm .sa-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#fff;animation:saPulse 1.6s ease-out infinite}
+
+/* --- storm center --- */
+#storm-card-active.alert-on{background:linear-gradient(100deg,#7d1414,#c0392b);border-color:transparent}
+#storm-card-active.alert-on .stat-num,#storm-card-active.alert-on .stat-label{color:#fff}
+.panel-title{padding:16px 20px;border-bottom:1px solid var(--line);font:800 14.5px var(--font-head);color:var(--navy)}
+.storm-leads{border:1.5px solid rgba(224,69,69,.45)}
+.storm-leads .panel-title{background:rgba(224,69,69,.07)}
+.storm-lead-actions{display:flex;gap:8px;flex-wrap:wrap}
+.storm-areas{display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.area-chip{display:inline-flex;align-items:center;gap:7px;background:var(--tint);color:var(--blue);font:600 12.5px var(--font-body);padding:6px 12px;border-radius:999px}
+.area-chip b{background:var(--blue);color:#fff;border-radius:999px;min-width:20px;height:20px;display:inline-grid;place-items:center;font-size:11px;padding:0 5px}
+.storm-row .lead-when{display:flex;flex-direction:column;gap:3px}
+.sr-until{font-weight:500;color:var(--faint);font-size:12px}
+.storm-areas-txt{font-size:13.5px;color:var(--muted)}
+.sev-badge{font:700 11px var(--font-body);text-transform:uppercase;letter-spacing:.05em;padding:3px 9px;border-radius:999px;color:#fff}
+.sev-extreme{background:#7d1414}
+.sev-severe{background:#c0392b}
+.sev-moderate{background:#d98614}
+.sev-minor{background:#2f80c3}
+.sev-unknown{background:var(--faint)}
+.data-src{font-size:12.5px;color:var(--faint)}
+
+/* --- storm toast (client-in-path notification) --- */
+.storm-toast{position:fixed;bottom:24px;right:24px;z-index:400;display:flex;align-items:center;gap:10px;max-width:380px;background:var(--navy);color:#fff;font:600 13.5px var(--font-body);padding:14px 18px;border-radius:14px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(16px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.storm-toast.show{opacity:1;transform:none}
+.storm-toast b{font-family:var(--font-head)}
+.storm-toast button{border:0;border-radius:999px;background:var(--grad);color:#fff;font:700 12.5px var(--font-body);padding:8px 14px;cursor:pointer;white-space:nowrap}
+.storm-toast button:hover{filter:brightness(1.12)}
+
+/* --- google reviews --- */
+.rev-stats{grid-template-columns:repeat(3,1fr)}
+.rev-setup{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);padding:30px 34px}
+.rev-setup h3{font-size:19px;color:var(--navy);margin-bottom:12px}
+.rev-setup ol{margin:0 0 14px;padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;line-height:1.6;color:var(--ink)}
+.rev-setup code{font:600 12.5px ui-monospace,monospace;background:var(--tint);color:var(--blue);padding:2px 7px;border-radius:6px}
+.rev-setup p{font-size:14px;color:var(--muted)}
+.rev-connect{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);padding:52px 34px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.rev-connect h3{font-size:21px;color:var(--navy)}
+.rev-connect p{max-width:440px;font-size:14.5px;line-height:1.6;color:var(--muted)}
+.rev-g{width:52px;height:52px;border-radius:50%;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0);color:#fff;display:grid;place-items:center;font:800 24px var(--font-head)}
+.rev-main{display:flex;flex-direction:column;gap:26px}
+.rev-row{padding:22px;border-bottom:1px solid var(--line)}
+.rev-row:last-child{border-bottom:0}
+.rev-head{display:flex;align-items:center;gap:12px}
+.rev-ava{width:42px;height:42px;border-radius:50%;object-fit:cover}
+.rev-ava-txt{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--grad);color:#fff;font:800 17px var(--font-head)}
+.rev-who{font:800 15px var(--font-head);color:var(--navy)}
+.rev-meta{font-size:13px;color:var(--muted);margin-top:2px}
+.rev-stars{color:#f0a92e;letter-spacing:1px}
+.rev-stars .dim{color:var(--line)}
+.rev-comment{margin-top:12px;font-size:14.5px;line-height:1.65;color:var(--ink);white-space:pre-wrap}
+.rev-reply{margin-top:12px;background:var(--tint);border-left:3px solid var(--blue-mid);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px}
+.rev-reply b{font:700 12px var(--font-head);color:var(--blue);text-transform:uppercase;letter-spacing:.05em}
+.rev-reply p{margin-top:5px;font-size:14px;line-height:1.6;color:var(--ink);white-space:pre-wrap}
+.rev-replybox{margin-top:14px;display:flex;gap:10px;align-items:flex-end}
+.rev-replybox textarea{flex:1;font:500 14px var(--font-body);color:var(--ink);background:var(--cloud);border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px 14px;resize:vertical;min-height:44px;outline:none;transition:border-color .25s}
+.rev-replybox textarea:focus{border-color:var(--blue-mid)}
+.rev-replybox .btn{padding:11px 18px;font-size:13.5px;white-space:nowrap}
+
+/* --- responsive --- */
+@media (max-width:860px){
+  .rev-stats{grid-template-columns:1fr}
+  .tool-group{justify-content:flex-start}
+}
+@media (max-width:640px){
+  .dash-tabs{width:100%;justify-content:space-between}
+  .dash-tabs button{padding:9px 12px;font-size:13px}
+  .date-range input{width:104px}
+  .rev-replybox{flex-direction:column;align-items:stretch}
+  .storm-toast{left:12px;right:12px;bottom:12px;max-width:none}
+}
+
+/* ============================================================
+   DARK MODE — admin pages only (html[data-theme="dark"]).
+   Re-skins the shared vars + the handful of hard-coded whites.
+   ============================================================ */
+html[data-theme="dark"]{
+  --cloud:#0b1520;--tint:#132b40;--ink:#e6edf5;--muted:#9db0c3;--faint:#6e8296;
+  --navy:#e6edf5;--line:rgba(156,196,228,.16);
+  --shadow-sm:0 4px 14px rgba(0,0,0,.35);--shadow-md:0 16px 40px rgba(0,0,0,.45);--shadow-lg:0 24px 56px rgba(0,0,0,.55);
+  color-scheme:dark;
+}
+html[data-theme="dark"] .admin-body{background:#0b1520}
+html[data-theme="dark"] .admin-top{background:#0f1d2c;border-bottom-color:var(--line)}
+html[data-theme="dark"] .admin-top .logo img{filter:brightness(0) invert(1)}
+html[data-theme="dark"] .theme-toggle{background:#132b40}
+html[data-theme="dark"] .dash-tabs,html[data-theme="dark"] .stat-card,html[data-theme="dark"] .lead-panel,
+html[data-theme="dark"] .ga-panel,html[data-theme="dark"] .rev-setup,html[data-theme="dark"] .rev-connect{background:#101f30}
+html[data-theme="dark"] .stat-card.accent,html[data-theme="dark"] #storm-card-active.alert-on{background:var(--grad)}
+html[data-theme="dark"] .seg,html[data-theme="dark"] .lead-search,html[data-theme="dark"] .tool-select,
+html[data-theme="dark"] .date-range,html[data-theme="dark"] .rev-replybox textarea{background-color:#0b1520}
+html[data-theme="dark"] .tool-btn,html[data-theme="dark"] .lead-advance{background:transparent;color:var(--sky)}
+html[data-theme="dark"] .tool-btn:hover,html[data-theme="dark"] .lead-advance:hover{background:var(--blue);color:#fff}
+html[data-theme="dark"] .lead-row[data-status="new"]{background:linear-gradient(90deg,rgba(156,196,228,.06),transparent 40%)}
+html[data-theme="dark"] .lead-badge.new{background:rgba(34,176,125,.16);color:#4cd6a2}
+html[data-theme="dark"] .lead-badge.contacted{background:rgba(217,134,20,.16);color:#eeb15c}
+html[data-theme="dark"] .lead-badge.closed{background:rgba(136,150,164,.16);color:#a9b7c4}
+html[data-theme="dark"] .lead-city{background:rgba(240,169,46,.14);color:#eec06a}
+html[data-theme="dark"] .rev-setup code{background:#0b1520}
+html[data-theme="dark"] .gate-card{background:#101f30}
+html[data-theme="dark"] .rev-stars .dim{color:#2a3d52}
+
+/* --- motion safety net --- */
+@media (prefers-reduced-motion:reduce){
+  .dash-tab.on,.lead-row.anim,.rev-row.anim,.dash-tab.on .stat-row .stat-card,.admin-storm{animation:none!important;opacity:1!important}
+  .tab-badge{animation:none}
+  .stat-card:hover,.dash-tabs button:hover,.tool-btn:hover{transform:none}
 }

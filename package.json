@@ -1,0 +1,8 @@
+{
+  "name": "ringco-roofing",
+  "private": true,
+  "description": "Static site — no dependencies. Deploy is configured in vercel.json; local preview: npm run dev",
+  "scripts": {
+    "dev": "node .claude/serve.cjs"
+  }
+}

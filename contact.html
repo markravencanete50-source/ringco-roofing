@@ -63,7 +63,10 @@
           <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
           <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
         </div>
-        <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px">
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email"></div>
+          <div class="field"><label for="f-city">City / area</label><input id="f-city" name="city" type="text" autocomplete="address-level2" placeholder="e.g. Edmond, Moore, OKC"></div>
+        </div>
         <div class="field"><label for="f-service">What do you need?</label>
           <select id="f-service" name="service">
             <option>Roof inspection / possible storm damage</option>
