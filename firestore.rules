@@ -35,6 +35,14 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Site settings (e.g. the public "recent storm" banner published from
+    // the admin Storm center). Anyone may read — the public site shows the
+    // banner — but only a signed-in admin may write.
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
     // Everything else stays fully locked.
     match /{document=**} {
       allow read, write: if false;

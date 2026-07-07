@@ -121,7 +121,8 @@ let curSearch = "";
 let curService = "all";
 let curFrom = null;       // Date | null — calendar range filter
 let curTo = null;
-let updateStatusFn = null; // set once Firestore is wired
+let updateStatusFn = null;  // set once Firestore is wired
+let publishBannerFn = null; // set once Firestore is wired — syncs the public storm banner
 
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
@@ -277,7 +278,7 @@ if (!configured) {
     const { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } = authMod;
     const {
       getFirestore, collection, query, where, orderBy, onSnapshot,
-      getDocs, doc, updateDoc, serverTimestamp,
+      getDocs, doc, updateDoc, setDoc, serverTimestamp,
     } = fsMod;
 
     const app = initializeApp(FIREBASE_CONFIG);
@@ -326,6 +327,20 @@ if (!configured) {
       try {
         await updateDoc(doc(db, "leads", id), { status, updatedAt: serverTimestamp() });
       } catch (_) { /* onSnapshot will resync; ignore transient errors */ }
+    };
+
+    // Publishes (or clears) the public-site "recent storm" banner.
+    // Called from the Storm center when "Match leads" toggles change.
+    publishBannerFn = async function (storm) {
+      try {
+        await setDoc(doc(db, "settings", "stormBanner"), storm ? {
+          enabled: true,
+          event: storm.event || "Severe storm",
+          onset: storm.onset || "",
+          areas: storm.areas || "",
+          updatedAt: serverTimestamp(),
+        } : { enabled: false, updatedAt: serverTimestamp() });
+      } catch (_) { /* signed out or rules not published — public banner just won't sync */ }
     };
 
     onAuthStateChanged(auth, async (user) => {
@@ -758,6 +773,12 @@ if (listEl) {
     const on = !tracked.has(id);
     if (on) tracked.set(id, a); else tracked.delete(id);
     saveTracked();
+    // sync the public-site banner: newest tracked storm, or clear when none left
+    if (publishBannerFn) {
+      const newest = [...tracked.values()]
+        .sort((x, y) => new Date(y.onset || 0) - new Date(x.onset || 0))[0] || null;
+      publishBannerFn(newest);
+    }
     b.classList.toggle("on", on);
     b.setAttribute("aria-pressed", on ? "true" : "false");
     b.querySelector(".st-label").textContent = on ? "Matching leads" : "Match leads";

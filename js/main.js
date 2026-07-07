@@ -391,10 +391,68 @@
       });
     }
 
-    // Preview hook — force a demo alert for design review
-    var demo = new URLSearchParams(location.search).get("stormdemo");
+    /* "Recent storm" banner — published from the admin Storm center when a
+       past storm is toggled on ("Match leads"). Read via the Firestore REST
+       API (public-read /settings doc) so no SDK weight lands on visitors.
+       Live NWS alerts always take priority over this. */
+    function renderRecent(ev, onset) {
+      var id = "recent|" + (onset || ev);
+      var dismissed;
+      try { dismissed = sessionStorage.getItem("ringco-storm-dismissed"); } catch (_) {}
+      if (dismissed === id) return;
+
+      var day = "";
+      if (onset) {
+        try { day = new Date(onset).toLocaleDateString([], { month: "short", day: "numeric" }); } catch (_) {}
+      }
+      var bar = document.createElement("div");
+      bar.className = "storm-alert recent";
+      bar.setAttribute("role", "status");
+      bar.innerHTML =
+        '<span class="sa-dot" aria-hidden="true"></span>' +
+        "<span><b>" + esc(ev) + "</b> hit the OKC metro" + (day ? " on " + esc(day) : "") + "." +
+        '<span class="sa-msg-extra"> Roof damage isn\'t always visible from the ground.</span></span>' +
+        '<a class="sa-cta" href="/contact">Get a free inspection →</a>' +
+        '<button class="sa-close" type="button" aria-label="Dismiss storm notice">✕</button>';
+      document.body.appendChild(bar);
+      document.body.classList.add("storm-on");
+      setTimeout(function () { bar.classList.add("show"); }, 30);
+      bar.querySelector(".sa-close").addEventListener("click", function () {
+        bar.classList.remove("show");
+        setTimeout(function () { bar.remove(); }, 400);
+        try { sessionStorage.setItem("ringco-storm-dismissed", id); } catch (_) {}
+      });
+    }
+
+    function checkRecent() {
+      import("/js/firebase-config.js").then(function (m) {
+        var cfg = m && m.FIREBASE_CONFIG;
+        if (!cfg || !cfg.projectId || !cfg.apiKey) return;
+        fetch("https://firestore.googleapis.com/v1/projects/" + cfg.projectId +
+          "/databases/(default)/documents/settings/stormBanner?key=" + cfg.apiKey)
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            var f = d && d.fields;
+            if (!f || !f.enabled || f.enabled.booleanValue !== true) return;
+            renderRecent(
+              (f.event && f.event.stringValue) || "A severe storm",
+              (f.onset && f.onset.stringValue) || null
+            );
+          })
+          .catch(function () {});
+      }).catch(function () { /* config not generated (local preview) */ });
+    }
+
+    // Preview hooks — force either banner state for design review
+    var params = new URLSearchParams(location.search);
+    var demo = params.get("stormdemo");
     if (demo) {
       render({ id: "demo", properties: { event: demo, severity: "Severe", areaDesc: "Oklahoma, OK" } });
+      return;
+    }
+    var demoRecent = params.get("recentdemo");
+    if (demoRecent) {
+      renderRecent(demoRecent, new Date().toISOString());
       return;
     }
 
@@ -402,15 +460,14 @@
     fetch("https://api.weather.gov/alerts/active?area=OK", { headers: { Accept: "application/geo+json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) {
-        if (!j || !j.features) return;
-        var hits = j.features.filter(function (f) {
+        var hits = (j && j.features || []).filter(function (f) {
           var p = f.properties;
           return RELEVANT.test(p.event) && METRO.test(p.areaDesc || "");
         });
-        if (!hits.length) return;
+        if (!hits.length) { checkRecent(); return; } // no live danger — maybe a published recent storm
         hits.sort(function (a, b) { return rank(b) - rank(a); });
         render(hits[0]);
       })
-      .catch(function () { /* silent — never surface a fetch error to visitors */ });
+      .catch(checkRecent); /* NWS unreachable — still try the published banner */
   })();
 })();
