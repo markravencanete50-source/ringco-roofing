@@ -79,6 +79,9 @@ if (tabsNav) {
 
 /* modules (storm center) can subscribe to lead-snapshot changes */
 const leadsChangedHooks = [];
+/* fired once a signed-in admin's dashboard is shown — lets the storm
+   center reconcile the public banner with its restored toggle state */
+const adminReadyHooks = [];
 
 /* ---------- screen switching ---------- */
 function showGate() {
@@ -331,6 +334,7 @@ if (!configured) {
 
     // Publishes (or clears) the public-site "recent storm" banner.
     // Called from the Storm center when "Match leads" toggles change.
+    // Returns true on success so the caller can confirm / warn the admin.
     publishBannerFn = async function (storm) {
       try {
         await setDoc(doc(db, "settings", "stormBanner"), storm ? {
@@ -340,13 +344,21 @@ if (!configured) {
           areas: storm.areas || "",
           updatedAt: serverTimestamp(),
         } : { enabled: false, updatedAt: serverTimestamp() });
-      } catch (_) { /* signed out or rules not published — public banner just won't sync */ }
+        return true;
+      } catch (_) {
+        return false; // signed out, or /settings rules not published yet
+      }
     };
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { stopLeads(); showGate(); return; }
       try {
-        if (await isActiveAdmin(user)) { showDashboard(); startLeads(); }
+        if (await isActiveAdmin(user)) {
+          showDashboard(); startLeads();
+          // now signed in — let the storm center push its restored toggle
+          // state to the public banner (self-heals a failed earlier write)
+          adminReadyHooks.forEach((f) => { try { f(); } catch (_) {} });
+        }
         else { err.textContent = "This account isn't an authorized admin."; await signOut(auth); showGate(); }
       } catch (e) {
         err.textContent = "Couldn't verify admin access — check the Firestore rules.";
@@ -763,6 +775,42 @@ if (listEl) {
     }
   }
 
+  /* Push the current toggle state to the public site. The banner shows the
+     newest tracked storm (or clears when none remain). `feedback` = show a
+     confirmation/warning toast (only when the admin actually clicks). */
+  const newestTracked = () => [...tracked.values()]
+    .sort((x, y) => new Date(y.onset || 0) - new Date(x.onset || 0))[0] || null;
+
+  async function syncBanner(feedback) {
+    const storm = newestTracked();
+    if (!publishBannerFn) {
+      if (feedback) bannerToast(false, storm, true);
+      return;
+    }
+    const ok = await publishBannerFn(storm);
+    if (feedback) bannerToast(ok, storm, false);
+  }
+
+  function bannerToast(ok, storm, signedOut) {
+    const prev = document.querySelector(".banner-toast");
+    if (prev) prev.remove();
+    const t = document.createElement("div");
+    t.className = "storm-toast banner-toast" + (ok ? " ok" : " warn");
+    t.setAttribute("role", "status");
+    t.innerHTML = ok
+      ? (storm
+          ? "✅ <b>Public site updated</b> — visitors now see the “" + esc(storm.event) + "” storm banner."
+          : "✅ <b>Public banner removed</b> — no storm is showing on the site now.")
+      : signedOut
+        ? "⚠️ <b>Saved locally only.</b> Sign in to the dashboard to show this on the public site."
+        : "⚠️ <b>Couldn’t update the public site.</b> Re-publish the Firestore rules (settings) — this is saved locally meanwhile.";
+    document.body.appendChild(t);
+    setTimeout(() => t.classList.add("show"), 30);
+    const close = () => { t.classList.remove("show"); setTimeout(() => t.remove(), 400); };
+    setTimeout(close, 6000);
+    t.addEventListener("click", close);
+  }
+
   // toggle "Match leads" on a previous storm — joins/leaves the matching pool
   $list.addEventListener("click", (e) => {
     const b = e.target.closest(".storm-track");
@@ -773,18 +821,17 @@ if (listEl) {
     const on = !tracked.has(id);
     if (on) tracked.set(id, a); else tracked.delete(id);
     saveTracked();
-    // sync the public-site banner: newest tracked storm, or clear when none left
-    if (publishBannerFn) {
-      const newest = [...tracked.values()]
-        .sort((x, y) => new Date(y.onset || 0) - new Date(x.onset || 0))[0] || null;
-      publishBannerFn(newest);
-    }
     b.classList.toggle("on", on);
     b.setAttribute("aria-pressed", on ? "true" : "false");
     b.querySelector(".st-label").textContent = on ? "Matching leads" : "Match leads";
     b.closest(".storm-row").classList.toggle("tracked", on);
     renderLeadsPanel();
+    syncBanner(true); // publish to the public site + confirm to the admin
   });
+
+  // when a signed-in admin's dashboard loads, re-publish whatever is toggled
+  // (heals a write that failed before rules were published / before sign-in)
+  adminReadyHooks.push(() => { if (tracked.size) syncBanner(false); });
 
   $range.addEventListener("change", load);
   el("storm-refresh").addEventListener("click", load);
